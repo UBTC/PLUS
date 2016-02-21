@@ -865,7 +865,7 @@ items follow a style that is consistent with other prog-modes."
 ;; Mac OS X fallback to the "open" program as the default viewer for all types of files.
 (cond
  ;; settings for Linux
- ((if *linux* "open")
+ (*linux*
   (cond
    ((executable-find "okular")
     (setq TeX-view-program-selection
