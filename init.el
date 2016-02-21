@@ -1,3 +1,6 @@
+;; !/usr/bin/env emacs
+;; -*- coding:utf-8 -*-
+
 ;; PULSE  """""""""""""""""""""""""""""""""""""""""""""""""""""""
 ;;
 ;; PULSE --- m.w.'s Emacs configurations (3G)
@@ -31,14 +34,15 @@
 
 ;; Record the start time
 (setq emacs-load-start-time (current-time))
+(setq debug-on-error t)
 
 ;; Emacs lisp is really only a subset of common lisp, and I need to have some of the
 ;; additional functionality to make the configuration and its dependencies work properly.
 (require 'cl) ; common-lisp always
 
 ;; The extra customs
-(setq custom-els "custom.el")
-(setq custom-org "custom.org")
+(setq custom-els (expand-file-name "custom.el" user-emacs-directory))
+(setq custom-org (expand-file-name "custom.org" user-emacs-directory))
 
 ;; Test architectures
 (setq *win32* (eq system-type 'windows-nt) )
@@ -419,6 +423,7 @@
 (require 'ob)
 (require 'org-install)
 (require 'org-habit)
+(require 'ob-tangle)
 
 ;; Enable logging when tasks are complete.
 (setq org-log-done t
@@ -1060,11 +1065,11 @@ items follow a style that is consistent with other prog-modes."
 ;; Appendix
 ;;----------------------------------------------------------------------------
 ;; The extra customs will be autoloaded.
-(when (file-exists-p custom-els) (load custom-els))
-(when (file-exists-p custom-org) (load custom-org))
+(when (and (file-exists-p custom-els) (file-exists-p custom-org)) (load custom-els))
+(when (and (file-exists-p custom-els) (not (file-exists-p custom-org))) (org-babel-load-file custom-org))
 
 ;; All done
 (when (require 'time-date nil t)
    (message "Emacs startup time: %d seconds."
     (time-to-seconds (time-since emacs-load-start-time))))
-(message "\nInitialization finished. Welcome to PULSE, %s!\n" (user-login-name) )
+(message "\nInitialization finished. Welcome to PULSE, %s!\n" (user-login-name))
