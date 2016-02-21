@@ -297,7 +297,7 @@
 (global-set-key (kbd "RET") 'newline-and-indent)
 (global-set-key [C-tab] 'hippie-expand)
 (global-set-key [backtab] "\C-q\t") ;; S-tab quotes a tab
-(global-set-key (kbd "C-x C-f") 'find-function)
+(global-set-key (kbd "C-x C-a") 'find-function)
 
 ;; M-x without meta
 (global-set-key (kbd "C-x C-e") 'execute-extended-command)
