@@ -1058,7 +1058,7 @@ items follow a style that is consistent with other prog-modes."
 ;; Appendix
 ;;----------------------------------------------------------------------------
 ;; The extra customs will be autoloaded.
-(progn (find-file custom-org) (org-babel-tangle))
+(when (and (not (file-exists-p custom-el)) (file-exists-p custom-org)) (org-babel-tangle-file custom-org))
 (when (file-exists-p custom-el) (load custom-el))
 
 ;; All done
