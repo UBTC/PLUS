@@ -294,10 +294,10 @@
 (global-set-key (kbd "RET") 'newline-and-indent)
 (global-set-key [C-tab] 'hippie-expand)
 (global-set-key [backtab] "\C-q\t") ;; S-tab quotes a tab
-(global-set-key (kbd "C-x C-a") 'find-function)
+;; (global-set-key (kbd "C-x C-a") 'find-function)
 
 ;; M-x without meta
-(global-set-key (kbd "C-x C-e") 'execute-extended-command)
+;; (global-set-key (kbd "C-x ") 'execute-extended-command)
 
 ;; Use regex to search by default
 (global-set-key (kbd "C-s") 'isearch-forward-regexp)
