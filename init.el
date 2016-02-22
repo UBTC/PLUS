@@ -13,7 +13,7 @@
 ;; and a lot of  other internet resources...
 ;;
 ;; COPYRIGHT, Mogei Wang, 2010-2016
-;; https://github.com/ubtc/pulse
+;; https://github.com/ubtc/PULSE
 ;;
 ;; """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
@@ -45,10 +45,10 @@
 (setq custom-org (expand-file-name "custom.org" user-emacs-directory))
 
 ;; Test architectures
-(setq *win32* (eq system-type 'windows-nt) )
-(setq *cygwin* (eq system-type 'cygwin) )
-(setq *linux* (or (eq system-type 'gnu/linux) (eq system-type 'linux)) )
-(setq *unix* (or *linux* (eq system-type 'usg-unix-v) (eq system-type 'berkeley-unix)) )
+(setq *win32* (eq system-type 'windows-nt))
+(setq *cygwin* (eq system-type 'cygwin))
+(setq *linux* (or (eq system-type 'gnu/linux) (eq system-type 'linux)))
+(setq *unix* (or *linux* (eq system-type 'usg-unix-v) (eq system-type 'berkeley-unix)))
 (setq *macbook-pro-support-enabled* t)
 
 ;; By default Emacs will initiate garbage-collection every 0.76 MB allocated
@@ -63,10 +63,8 @@
 ;; ELPA doesn’t include everything necessary, extra repositories are added.
 (load "package")
 (package-initialize)
-(add-to-list 'package-archives
-             '("marmalade" . "http://marmalade-repo.org/packages/"))
-(add-to-list 'package-archives
-             '("melpa" . "http://melpa.org/packages/"))
+(add-to-list 'package-archives '("marmalade" . "http://marmalade-repo.org/packages/"))
+(add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/"))
 (setq package-archive-enable-alist '(("melpa" deft magit)))
 
 ;; Load intsalled packages in site-lisp
@@ -138,8 +136,7 @@
                             paredit
   ) "Default packages")
 
-(loop for pkg in default-packages
-      collecting(require-package pkg))
+(loop for pkg in default-packages collecting(require-package pkg))
 
 
 ;;----------------------------------------------------------------------------
@@ -155,7 +152,7 @@
 
 ;; A warmly welcome.
 (setq-default initial-scratch-message
-              (concat ";; Welcome to PULSE, " (or user-login-name "") ". Happy hacking!\n\n"))
+              (concat ";; Welcome to PULSE powered Emacs, " (or user-login-name "") ". Happy hacking!\n\n"))
 
 ;; Effective emacs item 7; no scrollbar, no toolbar (no menubar?)
 (if (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
@@ -230,7 +227,7 @@
 (setq gdb-show-main t)
 
 ;; Display Settings.
-(setq frame-title-format '("%b" " - Emacs"))
+(setq frame-title-format '("%b" " - PULSE powered Emacs"))
 (setq-default indicate-empty-lines t)
 (when (not indicate-empty-lines) (toggle-indicate-empty-lines))
 (setq-default buffers-menu-max-size 30)
@@ -366,10 +363,7 @@
 ;; recentf-mode
 (setq recentf-keep '(file-remote-p file-readable-p))
 (setq recentf-max-saved-items 1000
-      recentf-exclude '("/tmp/"
-                        "/ssh:"
-                        "/sudo:"
-                        "/home/[a-z]\+/\\."))
+      recentf-exclude '("/tmp/" "/ssh:" "/sudo:" "/home/[a-z]\+/\\."))
 (recentf-mode 1)
 
 ;; save a bunch of variables to the desktop file:
@@ -413,8 +407,7 @@
                 ("djview" "djvu")
                 ("firefox" "xml" "xhtml" "html" "htm" "mht")))
 (add-to-list 'dired-guess-shell-alist-default
-            (list (concat "\\." (regexp-opt (cdr file) t) "$")
-                          (car file))))
+            (list (concat "\\." (regexp-opt (cdr file) t) "$") (car file))))
 
 ;;----------------------------------------------------------------------------
 ;; Org Settings
@@ -481,7 +474,6 @@
 (org-babel-do-load-languages
  'org-babel-load-languages
  '((python . t)
-   ;; (julia . t) ;; org-babel-julia does not work well...
    (fortran . t)
    (gnuplot . t)
    (C . t)
@@ -504,10 +496,8 @@
 (setq org-src-fontify-natively t
       org-confirm-babel-evaluate nil)
 
-(add-hook 'org-babel-after-execute-hook (lambda ()
-                                          (condition-case nil
-                                              (org-display-inline-images)
-                                            (error nil)))
+(add-hook 'org-babel-after-execute-hook
+          (lambda () (condition-case nil (org-display-inline-images) (error nil)))
           'append)
 
 (add-hook 'org-mode-hook (lambda () (abbrev-mode 1)))
@@ -554,10 +544,7 @@
 ;; Configure lisp
 ;;----------------------------------------------------------------------------
 (require 'lisp-mode)
-(setq lisp-modes '(lisp-mode
-                   emacs-lisp-mode
-                   common-lisp-mode
-                   scheme-mode))
+(setq lisp-modes '(lisp-mode emacs-lisp-mode common-lisp-mode scheme-mode))
 
 (defvar lisp-power-map (make-keymap))
 (define-minor-mode lisp-power-mode "Fix keybindings; add power."
@@ -568,19 +555,17 @@
 (define-key lisp-power-map [backspace] 'paredit-backward-delete)
 (defun engage-lisp-power () (lisp-power-mode t))
 
-(dolist (mode lisp-modes)
-  (add-hook (intern (format "%s-hook" mode)) #'engage-lisp-power))
+(dolist (mode lisp-modes) (add-hook (intern (format "%s-hook" mode)) #'engage-lisp-power))
 
 (setq inferior-lisp-program "clisp")
 (setq scheme-program-name "racket")
 
-(let* ((lispy-hooks '(lisp-mode-hook
-                      inferior-lisp-mode-hook
-                      lisp-interaction-mode-hook))))
+(let* ((lispy-hooks '(lisp-mode-hook inferior-lisp-mode-hook lisp-interaction-mode-hook))))
 
 (turn-on-eldoc-mode)
 (add-to-list 'auto-mode-alist '("\\.emacs-project\\'" . emacs-lisp-mode))
 (add-to-list 'auto-mode-alist '("archive-contents\\'" . emacs-lisp-mode))
+
 
 ;;----------------------------------------------------------------------------
 ;; Auto-complete
@@ -998,7 +983,6 @@ items follow a style that is consistent with other prog-modes."
 ;; ispell-cmd-args is useless, it's the list of *extra* command line arguments
 ;; we will append to the ispell process when ispell-send-string()
 ;; ispell-extra-args is the command arguments which will *always* be used when start ispell process
-;; (setq ispell-cmd-args (flyspell-detect-ispell-args))
 (defadvice ispell-word (around my-ispell-word activate)
   (let ((old-ispell-extra-args ispell-extra-args))
     (ispell-kill-ispell t)
@@ -1062,7 +1046,5 @@ items follow a style that is consistent with other prog-modes."
 (when (file-exists-p custom-el) (load custom-el))
 
 ;; All done
-(when (require 'time-date nil t)
-   (message "Emacs startup time: %d seconds."
-    (time-to-seconds (time-since emacs-load-start-time))))
-(message "\nInitialization finished. Welcome to PULSE, %s!\n" (user-login-name))
+(when (require 'time-date nil t) (message "Emacs startup time: %d seconds." (time-to-seconds (time-since emacs-load-start-time))))
+(message "\nInitialization finished. Welcome to PULSE powered %s, %s!\n" (invocation-name) (user-login-name))

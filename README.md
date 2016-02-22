@@ -6,7 +6,7 @@ my [Emacs](https://www.gnu.org/software/emacs/) configuration.
 
 ## Directory structure
 - `~/.emacs.d/init.el` is the configuration entrance and the most important file.
-- `~/.emacs.d/custom.el` includes some extra configurations [custom.org also works].
+- `~/.emacs.d/custom.el` includes some extra configurations (`custom.org` also works).
 - `~/.emacs.d/elpa/` will be auto-maintained by the package manager elpa.
 - `~/.emacs.d/site-lisp/` collects the packages that are not maintained by elpa.
 - `~/.emacs.d/snippets` collects [snippets](https://github.com/CestDiego/.emacs.d/tree/master/snippets) for [Yasnippet](https://github.com/capitaomorte/yasnippet).
