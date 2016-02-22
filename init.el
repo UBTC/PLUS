@@ -41,7 +41,7 @@
 (require 'cl) ; common-lisp always
 
 ;; The extra customs
-(setq custom-els (expand-file-name "custom.el" user-emacs-directory))
+(setq custom-el (expand-file-name "custom.el" user-emacs-directory))
 (setq custom-org (expand-file-name "custom.org" user-emacs-directory))
 
 ;; Test architectures
@@ -1022,13 +1022,6 @@ items follow a style that is consistent with other prog-modes."
 ;;----------------------------------------------------------------------------
 ;; Color and theme things
 ;;----------------------------------------------------------------------------
-(require 'ansi-color)
-(defun colorize-compilation-buffer ()
-  (toggle-read-only)
-  (ansi-color-apply-on-region (point-min) (point-max))
-  (toggle-read-only))
-(add-hook 'compilation-filter-hook 'colorize-compilation-buffer)
-
 (require 'color-theme)
 (require 'monokai-theme)
 ;; work around color theme bug
@@ -1065,8 +1058,8 @@ items follow a style that is consistent with other prog-modes."
 ;; Appendix
 ;;----------------------------------------------------------------------------
 ;; The extra customs will be autoloaded.
-(when (and (file-exists-p custom-els) (file-exists-p custom-org)) (load custom-els))
-(when (and (file-exists-p custom-els) (not (file-exists-p custom-org))) (org-babel-load-file custom-org))
+(progn (find-file custom-org) (org-babel-tangle))
+(when (file-exists-p custom-el) (load custom-el))
 
 ;; All done
 (when (require 'time-date nil t)
