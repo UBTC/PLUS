@@ -119,6 +119,7 @@
                            ebib
                            ess
                            julia-mode
+                           julia-shell
                            ace-jump-mode
                            auto-complete
                            multiple-cursors
@@ -512,13 +513,12 @@
 ;;----------------------------------------------------------------------------
 (defvar julia-packages '(ess-site
                          julia-mode
-                         ;; julia-shell
-                         ;; julia-shell-mode
+                         julia-shell
                          ) "Package list for Julia")
 (load-package-layer julia-packages)
 
-;; (define-key julia-mode-map (kbd "C-c C-c") 'julia-shell-run-region-or-line)
-;; (define-key julia-mode-map (kbd "C-c C-s") 'julia-shell-save-and-go)
+(define-key julia-mode-map (kbd "C-c C-c") 'julia-shell-run-region-or-line)
+(define-key julia-mode-map (kbd "C-c C-s") 'julia-shell-save-and-go)
 
 
 ;;----------------------------------------------------------------------------
