@@ -494,13 +494,12 @@
 (load-package-layer theme-packages)
 
 ;; Custom sets
-;; Custom sets
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(default ((t (:family "文泉驿等宽正黑" :foundry "unknown" :slant normal :weight normal :height 128 :width normal))))
+ '(default ((t (:family "Droid Sans Fallback" :foundry "unknown" :slant normal :weight normal :height 128 :width normal))))
  '(window-numbering-face ((t (:foreground "DeepPink" :underline "DeepPink" :weight bold))) t))
 
 
@@ -625,7 +624,7 @@
 ;; (load "~/.emacs.d/site-lisp/auctex/auctex.el" nil t t)
 ;; (when (locate-library "auctex") (setq reftex-plug-into-AUCTeX t))
 
-(global-set-key "\C-cb" 'ebib)
+(global-set-key "\C-c b" 'ebib)
 
 (setq TeX-default-mode 'LaTeX-mode) ; Default mode for .tex files
 (setq TeX-force-default-mode t) ; Force This mode Always, it is MANDATORY for my sake
@@ -731,8 +730,9 @@
                            ) "Package list for session managment")
 (load-package-layer session-packages)
 
-(desktop-save-mode)
+(desktop-save-mode 1)
 (setq-default save-place t)
+(setq desktop-restore-frames nil)
 (add-hook 'after-init-hook 'session-initialize)
 
 ;; recentf-mode
