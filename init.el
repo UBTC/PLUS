@@ -103,31 +103,27 @@
 (add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/"))
 (setq package-archive-enable-alist '(("melpa" deft magit)))
 
-(defvar my-elpa-packages '(evil
-                           session
-                           dired+
-                           smex
-                           flymake
-                           flyspell-lazy
-                           company
-                           vlf
-                           org
-                           elpy
-                           color-theme
-                           monokai-theme
+(defvar my-elpa-packages '(ac-slime
+                           ace-jump-mode
                            browse-kill-ring
+                           color-theme
+                           company
+                           dired+
                            ebib
                            ess
+                           evil
+                           flymake
+                           flyspell-lazy
                            julia-mode
                            julia-shell
-                           ace-jump-mode
-                           auto-complete
+                           monokai-theme
                            multiple-cursors
-                           popup
+                           org
                            powerline
-                           ac-slime
+                           session
+                           smex
+                           vlf
                            writegood-mode
-                           paredit
   ) "ELPA packages")
 
 (loop for pkg in my-elpa-packages
@@ -218,10 +214,10 @@
 ;;----------------------------------------------------------------------------
 ;; Kill ring
 ;;----------------------------------------------------------------------------
-(setq kill-ring-max 3000)
-(setq undo-limit 5000000)
 (defvar killring-packages '(browse-kill-ring) "Package list for browse killring")
 (load-package-layer killring-packages)
+(setq kill-ring-max 3000)
+(setq undo-limit 5000000)
 (browse-kill-ring-default-keybindings)
 (setq-default mouse-yank-at-point t)
 (setq-default save-interprogram-paste-before-kill t)
@@ -361,6 +357,10 @@
 (global-set-key (kbd "M-x") 'smex)
 (global-set-key (kbd "M-Z") 'smex-major-mode-commands)
 
+;; Buffers
+(setq read-file-name-completion-ignore-case t)
+(defalias 'list-buffers 'ibuffer)
+
 
 ;;----------------------------------------------------------------------------
 ;; Autocomplete
@@ -407,13 +407,6 @@
 (setq vc-make-backup-files t)
 (setq kept-old-versions 5)
 (setq kept-new-versions 5)
-
-
-;;----------------------------------------------------------------------------
-;; Buffer
-;;----------------------------------------------------------------------------
-(setq read-file-name-completion-ignore-case t)
-(defalias 'list-buffers 'ibuffer)
 
 
 ;;----------------------------------------------------------------------------
@@ -502,9 +495,17 @@
 
 ;; Custom sets
 (custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
  '(safe-local-variable-values (quote ((lentic-init . lentic-orgel-org-init))))
  '(session-use-package t nil (session)))
 (custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
  '(window-numbering-face ((t (:foreground "DeepPink" :underline "DeepPink" :weight bold))) t))
 
 
@@ -621,7 +622,6 @@
 ;;----------------------------------------------------------------------------
 ;; LaTeX
 ;;----------------------------------------------------------------------------
-;;; LaTeX
 ;; https://github.com/CestDiego/.emacs.d/blob/master/user-lisp/setup-latex.el
 ;; https://github.com/xyguo/emacs.d/blob/master/lisp/init-auctex.el
 ;; https://github.com/xiaohanyu/oh-my-emacs/blob/master/modules/ome-tex.org
