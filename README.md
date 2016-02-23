@@ -7,13 +7,12 @@ my [Emacs](https://www.gnu.org/software/emacs/) configuration.
 ## Directory structure
 - `~/.emacs.d/init.el` is the configuration entrance and the most important file.
 - `~/.emacs.d/custom.el` includes some extra configurations (`custom.org` also works).
-- `~/.emacs.d/elpa/` will be auto-maintained by the package manager elpa.
-- `~/.emacs.d/site-lisp/` collects the packages that are not maintained by elpa.
-- `~/.emacs.d/snippets` collects [snippets](https://github.com/CestDiego/.emacs.d/tree/master/snippets) for [Yasnippet](https://github.com/capitaomorte/yasnippet).
+- `~/.emacs.d/site-lisp/` collects the packages that are not maintained by `elpa`.
+- `~/.emacs.d/elpa/` and the other things will be auto-maintained by package manager `elpa`, or the other packages.
 
 
 ## Modules
-**Julia, Haskell, Golang, Python, R, LaTeX, Markdown, Pandoc and gnuplot are supported.**
+**Julia and LaTeX are supported**
 
 
 # Installation
@@ -40,30 +39,6 @@ OS package manager usually is a convenient way to install the packages you need.
 
 ### julia platform
 - needed by `julia-mode`
-- install through OS package manager
-
-### golang platform
-- needed by `go-mode`
-- install through OS package manager
-
-### pandoc
-- needed by `pandoc-mode`
-- install through OS package manager
-
-### python platform
-- needed by `elpy`
-- install through OS package manager
-
-### R platform
-- needed by `ESS`
-- install through OS package manager
-
-### haskell platform
-- needed by `haskell-mode`
-- install through OS package manager
-
-### gnuplot
-- needed by `gnuplot`
 - install through OS package manager
 
 ### auctex, and xetex/latex

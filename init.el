@@ -21,55 +21,126 @@
 ;;----------------------------------------------------------------------------
 ;; Environment
 ;;----------------------------------------------------------------------------
-;; Emacs will normally pick user infomation up automatically, but
-;; this way I can be sure the right information is always present.
+;; User infomation
 (setq user-full-name "Mogei Wang")
 (setq user-mail-address "mogeiwang@gmail.com")
 
-;; There are plenty of things installed outside of the default PATH.
-;; This allows me to establish additional PATH information.
-(setenv "PATH" (concat "/usr/local/bin:/opt/local/bin:/usr/bin:/bin" (getenv "PATH")))
-(setenv "GOPATH" (concat (getenv "HOME") "/goWork"))
-(add-to-list 'exec-path (concat (getenv "GOPATH") "/bin"))
+;; Pathes
+(setenv "PATH" (concat "/usr/local/bin:/opt:/usr/bin:/bin" (getenv "PATH")))
+;; (setenv "GOPATH" (concat (getenv "HOME") "/goWork"))
+;; (add-to-list 'exec-path (concat (getenv "GOPATH") "/bin"))
 
-;; Record the start time
-(setq emacs-load-start-time (current-time))
-(setq debug-on-error t)
-
-;; Emacs lisp is really only a subset of common lisp, and I need to have some of the
-;; additional functionality to make the configuration and its dependencies work properly.
-(require 'cl) ; common-lisp always
-
-;; The extra customs
-(setq custom-el (expand-file-name "custom.el" user-emacs-directory))
-(setq custom-org (expand-file-name "custom.org" user-emacs-directory))
-
-;; Test architectures
+;; Architectures related
 (setq *win32* (eq system-type 'windows-nt))
 (setq *cygwin* (eq system-type 'cygwin))
 (setq *linux* (or (eq system-type 'gnu/linux) (eq system-type 'linux)))
 (setq *unix* (or *linux* (eq system-type 'usg-unix-v) (eq system-type 'berkeley-unix)))
 (setq *macbook-pro-support-enabled* t)
 
-;; By default Emacs will initiate garbage-collection every 0.76 MB allocated
-;; (gc-cons-threshold == 800000). We increase it to 16MB.
-(defun my-optimize-gc (NUM PER)
-  (setq-default gc-cons-threshold (* 1024 1024 NUM)
-                gc-cons-percentage PER))
-(my-optimize-gc 16 0.5)
 
+;;----------------------------------------------------------------------------
+;; Default globals
+;;----------------------------------------------------------------------------
+;; Common-lisp always
+(require 'cl)
+
+;; Since I end up using org-mode most of the time, set the default mode accordingly.
+(setq initial-major-mode 'org-mode)
+
+;; Text marking
+(transient-mark-mode t)
+(setq x-select-enable-clipboard t)
+
+;; Yes or no
+(defalias 'yes-or-no-p 'y-or-n-p)
+
+;; Record the start time
+(require 'time-date nil t)
+(setq emacs-load-start-time (current-time))
+(setq debug-on-error t)
+
+;; Increase garbage-collection threshold
+(setq-default gc-cons-threshold (* 1024 1024 16))
+(setq-default gc-cons-percentage 0.5)
+
+;; WWW
+(setq browse-url-mozilla-program "firefox")
+
+;; UTF
+(set-language-environment "utf-8")
+
+
+;;----------------------------------------------------------------------------
+;; Functions
+;;----------------------------------------------------------------------------
+;; Check & install elpa packages
+(defun check-elpa-packages (package &optional min-version no-refresh)
+  "Ask elpa to install given PACKAGE."
+  (if (package-installed-p package min-version) t
+    (if (or (assoc package package-archive-contents) no-refresh)
+        (package-install package)
+      (progn
+        (package-refresh-contents)
+        (check-elpa-packages package min-version t)))))
+
+;; Use inner packages packed in lists
+(defun load-package-layer (package-list)
+  (loop for pkg in package-list
+    collecting(require pkg)))
+
+;; a no-op function to bind to if you want to set a keystroke to null
+(defun void () "this is a no-op" (interactive))
+
+
+;;----------------------------------------------------------------------------
 ;; Package Management
-;; Emacs 24+ includes the Emacs Lisp Package Archive (ELPA) by default.
-;; ELPA doesn’t include everything necessary, extra repositories are added.
-(load "package")
+;;----------------------------------------------------------------------------
+(defvar package-packages '(package) "Package list for import more packages")
+(load-package-layer package-packages)
+
 (package-initialize)
 (add-to-list 'package-archives '("marmalade" . "http://marmalade-repo.org/packages/"))
 (add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/"))
 (setq package-archive-enable-alist '(("melpa" deft magit)))
 
-;; Load intsalled packages in site-lisp
+(defvar my-elpa-packages '(evil
+                           session
+                           dired+
+                           smex
+                           flymake
+                           flyspell-lazy
+                           company
+                           vlf
+                           org
+                           elpy
+                           color-theme
+                           monokai-theme
+                           browse-kill-ring
+                           ebib
+                           ess
+                           julia-mode
+                           ace-jump-mode
+                           auto-complete
+                           multiple-cursors
+                           popup
+                           powerline
+                           ac-slime
+                           writegood-mode
+                           paredit
+  ) "ELPA packages")
+
+(loop for pkg in my-elpa-packages
+      collecting(check-elpa-packages pkg))
+
+
+;;----------------------------------------------------------------------------
+;; Site packages
+;;----------------------------------------------------------------------------
+;; Local packages are in site-lisp
 (defvar sitelisp-dir (expand-file-name "site-lisp" user-emacs-directory))
 (add-to-list 'load-path sitelisp-dir)
+
+;; Load site packages
 (if (fboundp 'normal-top-level-add-to-load-path)
     (let (default-directory sitelisp-dir)
       (progn
@@ -80,103 +151,87 @@
                      collecting (expand-file-name dir))
                load-path)))))
 
-;; FUNCTION: Check & install elpa packages
-(defun require-package (package &optional min-version no-refresh)
-  "Ask elpa to install given PACKAGE."
-  (if (package-installed-p package min-version) t
-    (if (or (assoc package package-archive-contents) no-refresh)
-        (package-install package)
-      (progn
-        (package-refresh-contents)
-        (require-package package min-version t)))))
-
-
-(defvar default-packages '( evil
-                            session
-                            dired+
-                            smex
-                            idomenu
-                            yasnippet
-                            flymake
-                            flyspell-lazy
-                            company
-                            vlf
-                            org
-                            elpy
-                            color-theme
-                            monokai-theme
-                            browse-kill-ring
-                            haskell-mode
-                            window-numbering
-                            pandoc-mode
-                            gnuplot-mode
-                            go-mode
-                            go-autocomplete
-                            go-eldoc
-                            ebib
-                            markdown-mode
-                            ess
-                            julia-mode
-                            ace-jump-mode
-                            auto-complete
-                            autopair
-                            column-enforce-mode
-                            minimap
-                            multiple-cursors
-                            popup
-                            powerline
-                            switch-window
-                            undo-tree
-                            yaml-mode
-                            ac-slime
-                            writegood-mode
-                            deft
-                            graphviz-dot-mode
-                            marmalade
-                            paredit
-  ) "Default packages")
-
-(loop for pkg in default-packages collecting(require-package pkg))
-
 
 ;;----------------------------------------------------------------------------
-;; Interface
+;; Cursor settings
 ;;----------------------------------------------------------------------------
-;; Start-up loads.
-(load-library "hideshow")
-(autoload 'ivy-read "ivy")
-(require 'browse-kill-ring)
-
-;; Since I end up using org-mode most of the time, set the default mode accordingly.
-(setq initial-major-mode 'org-mode)
-
-;; A warmly welcome.
-(setq-default initial-scratch-message
-              (concat ";; Welcome to PULSE powered Emacs, " (or user-login-name "") ". Happy hacking!\n\n"))
-
-;; Effective emacs item 7; no scrollbar, no toolbar (no menubar?)
-(if (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
-(if (fboundp 'tool-bar-mode) (tool-bar-mode -1))
-
-;; Text marking, and system clipboard processing.
-(transient-mark-mode t)
-(setq x-select-enable-clipboard t)
-
-;; Cursor settings, and the current line.
 (delete-selection-mode t)
 (blink-cursor-mode -1)
-(global-hl-line-mode t)
+
+;; Multicursor
+(global-set-key (kbd "C-}") 'mc/mark-next-like-this)
+(global-set-key (kbd "C-{") 'mc/mark-previous-like-this)
+
+
+;;----------------------------------------------------------------------------
+;; Hint
+;;----------------------------------------------------------------------------
+;; Pair
+(show-paren-mode t)
+
+;; Numbering
 (global-linum-mode t)
 (column-number-mode 1)
 
-;; More highlights.
+;; Time display
+(setq display-time-24hr-format t)
+(setq display-time-day-and-date t)
+(display-time)
+
+
+;;----------------------------------------------------------------------------
+;; Highlight
+;;----------------------------------------------------------------------------
+(setq-default grep-highlight-matches t)
 (autoload 'highlight-symbol "highlight-symbol" "" t)
 (autoload 'highlight-symbol-next "highlight-symbol" "" t)
 (autoload 'highlight-symbol-prev "highlight-symbol" "" t)
 (autoload 'highlight-symbol-nav-mode "highlight-symbol" "" t)
 (autoload 'highlight-symbol-query-replace "highlight-symbol" "" t)
+(global-hl-line-mode t)
 
-;; Spacing.
+
+;;----------------------------------------------------------------------------
+;; Indentation
+;;----------------------------------------------------------------------------
+(setq tab-width 4)
+(setq default-tab-width 4)
+(setq tab-always-indent 'complete)
+(setq-default indent-tabs-mode nil)
+(setq-default indicate-empty-lines t)
+(when (not indicate-empty-lines) (toggle-indicate-empty-lines))
+(setq next-line-add-newlines nil)
+(global-set-key (kbd "RET") 'newline-and-indent)
+
+
+;;----------------------------------------------------------------------------
+;; Fold
+;;----------------------------------------------------------------------------
+(load-library "hideshow")
+(setq-default case-fold-search t)
+(global-set-key (kbd "C-+") 'hs-show-block)
+(global-set-key (kbd "C--") 'hs-hide-block)
+(global-set-key (kbd "C-=") 'hs-hide-all)
+
+
+;;----------------------------------------------------------------------------
+;; Kill ring
+;;----------------------------------------------------------------------------
+(setq kill-ring-max 3000)
+(setq undo-limit 5000000)
+(defvar killring-packages '(browse-kill-ring) "Package list for browse killring")
+(load-package-layer killring-packages)
+(browse-kill-ring-default-keybindings)
+(setq-default mouse-yank-at-point t)
+(setq-default save-interprogram-paste-before-kill t)
+(setq browse-kill-ring-display-duplicates nil)
+(setq browse-kill-ring-show-preview nil)
+(browse-kill-ring-default-keybindings)
+
+
+;;----------------------------------------------------------------------------
+;; Spacing
+;;----------------------------------------------------------------------------
 (setq-default line-spacing 0.2)
 (setq-default truncate-lines nil)
 (setq-default truncate-partial-width-windows nil)
@@ -184,136 +239,43 @@
 (global-whitespace-mode t)
 (setq-default show-trailing-whitespace t)
 
-;; Set scrolls.
-(setq scroll-step 1)
-(setq scroll-margin 10)
-(setq scroll-conservatively 100)
-(setq-default grep-scroll-output t)
-(setq-default compilation-scroll-output t)
 
-;; Action echos.
-(setq-default case-fold-search t)
-(setq-default grep-highlight-matches t)
-(setq-default mouse-yank-at-point t)
-(setq-default set-mark-command-repeat-pop t)
-(setq-default save-interprogram-paste-before-kill t)
-(setq tab-always-indent 'complete)
-(setq echo-keystrokes 0.1)
-(show-paren-mode t)
-(defalias 'yes-or-no-p 'y-or-n-p)
-
-;; Action modes.
-(auto-compression-mode 1)
-(icomplete-mode 1)
-(setq read-buffer-completion-ignore-case t)
-(setq completion-ignore-case t)
-(setq read-file-name-completion-ignore-case t)
-(global-undo-tree-mode)
-(setq next-line-add-newlines nil)
-(defalias 'list-buffers 'ibuffer)
-
-;; Find-file-in-project (ffip).
-(autoload 'find-file-in-project "find-file-in-project" "" t)
-(autoload 'find-file-in-project-by-selected "find-file-in-project" "" t)
-(autoload 'ffip-get-project-root-directory "find-file-in-project" "" t)
-
-;; Show no preview, no duplicate in killring.
-(setq browse-kill-ring-display-duplicates nil)
-(setq browse-kill-ring-show-preview nil)
-(browse-kill-ring-default-keybindings)
-
-;; Always use gdb-many-windows.
-(setq gdb-many-windows t)
-(setq gdb-show-main t)
-
-;; Display Settings.
+;;----------------------------------------------------------------------------
+;; GUI
+;;----------------------------------------------------------------------------
+;; Window frame
 (setq frame-title-format '("%b" " - PULSE powered Emacs"))
-(setq-default indicate-empty-lines t)
-(when (not indicate-empty-lines) (toggle-indicate-empty-lines))
 (setq-default buffers-menu-max-size 30)
 
-;; Sub-windows
-(require 'window-numbering)
-(window-numbering-mode 1)
-(winner-mode t)
-(windmove-default-keybindings)
-(setq-default ediff-split-window-function 'split-window-horizontally)
-(setq-default ediff-window-setup-function 'ediff-setup-windows-plain)
-
-;; Powerline, toolbar.
+;; Bars
+(if (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
+(if (fboundp 'tool-bar-mode) (tool-bar-mode -1))
 (powerline-center-theme)
 (setq powerline-default-separator 'wave)
 (setq-default tooltip-delay 1.5)
-
-;; Time display.
-(setq display-time-24hr-format t)
-(setq display-time-day-and-date t)
-(display-time)
-
-;; Indentation.
-(setq-default indent-tabs-mode nil)
-(setq default-tab-width 4)
-(setq tab-width 4)
-
-;; Autosaves.
-(setq auto-save-mode t)
-(setq version-control t)
-(setq delete-old-versions t)
-(setq vc-make-backup-files t)
-(setq kept-old-versions 5)
-(setq kept-new-versions 5)
-(setq backup-directory-alist (quote (("" . "~/.emacs.d/backup"))))
-(setq auto-save-file-name-transforms '((".*" "~/.emacs.d/auto-save-list/" t)))
-
-;; Custom sets.
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(safe-local-variable-values (quote ((lentic-init . lentic-orgel-org-init))))
- '(session-use-package t nil (session)))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(window-numbering-face ((t (:foreground "DeepPink" :underline "DeepPink" :weight bold))) t))
+(setq scroll-step 1)
+(setq scroll-margin 5)
+(setq scroll-conservatively 100)
+(setq-default compilation-scroll-output t)
 
 
 ;;----------------------------------------------------------------------------
-;; Miscellaneous key binding stuff
+;; Jump
 ;;----------------------------------------------------------------------------
-;; a no-op function to bind to if you want to set a keystroke to null
-(defun void () "this is a no-op" (interactive))
+(global-set-key (kbd "C->") 'ace-jump-mode)
+(global-set-key (kbd "C-<") 'find-function)
 
-(global-set-key (kbd "C-=") 'hs-hide-block)
-(global-set-key (kbd "C--") 'hs-show-block)
-(global-set-key (kbd "C-+") 'hs-hide-all)
-
-(global-set-key (kbd "RET") 'newline-and-indent)
-(global-set-key [C-tab] 'hippie-expand)
-(global-set-key [backtab] "\C-q\t") ;; S-tab quotes a tab
-;; (global-set-key (kbd "C-x C-a") 'find-function)
-
-;; M-x without meta
-;; (global-set-key (kbd "C-x ") 'execute-extended-command)
-
-;; Use regex to search by default
+;; Search
 (global-set-key (kbd "C-s") 'isearch-forward-regexp)
 (global-set-key (kbd "C-r") 'isearch-backward-regexp)
 (global-set-key (kbd "C-M-s") 'isearch-forward)
 (global-set-key (kbd "C-M-r") 'isearch-backward)
 (define-key isearch-mode-map (kbd "C-o") 'isearch-occur)
 
-(global-set-key (kbd "M-/") 'undo-tree-visualize)
-(global-set-key (kbd "C-M-z") 'switch-window)
-(global-set-key (kbd "C-,") 'ace-jump-mode)
 
-(global-set-key (kbd "C-}") 'mc/mark-next-like-this)
-(global-set-key (kbd "C-{") 'mc/mark-previous-like-this)
-
-;; Fn keys.
+;;----------------------------------------------------------------------------
+;; Miscellaneous key bindings
+;;----------------------------------------------------------------------------
 (global-set-key [f1]  'split-window-horizontally)
 (global-set-key [f2]  'split-window-vertically)
 (global-set-key [f3]  'next-multiframe-window)
@@ -326,12 +288,13 @@
 
 
 ;;----------------------------------------------------------------------------
-;; Evil related
+;; Vim related
 ;;----------------------------------------------------------------------------
+(defvar vim-packages '(evil) "Package list for vim")
+(load-package-layer vim-packages)
+
 (setq evil-symbol-word-search t)
-(add-to-list 'load-path "~/.emacs.d/site-lisp/evil/lib")
 (setq evil-default-cursor t)
-(require 'evil)
 (evil-mode 1)
 
 ; Make horizontal movement cross lines
@@ -345,53 +308,16 @@
 
 ;; vimrc
 (autoload 'vimrc-mode "vimrc-mode")
-(add-to-list 'auto-mode-alist '("\\.?vim\\(rc\\)?$" . vimrc-mode))
+(add-to-list 'auto-mode-alist '("~/.config/nvim/init.vim" . vimrc-mode))
+
 
 ;;----------------------------------------------------------------------------
-;; Configure session
+;; Directories op
 ;;----------------------------------------------------------------------------
-;; Load the last edited files
-(require 'saveplace)
-(setq-default save-place t)
+(defvar dir-packages '(dired+) "Package list for directories")
+(load-package-layer dir-packages)
 
-(setq desktop-path '("~/.emacs.d"))
-(load "desktop")
-(desktop-save-mode)
-(setq session-save-file (expand-file-name "~/.emacs.d/.session"))
-(add-hook 'after-init-hook 'session-initialize)
-
-;; recentf-mode
-(setq recentf-keep '(file-remote-p file-readable-p))
-(setq recentf-max-saved-items 1000
-      recentf-exclude '("/tmp/" "/ssh:" "/sudo:" "/home/[a-z]\+/\\."))
-(recentf-mode 1)
-
-;; save a bunch of variables to the desktop file:
-(setq desktop-globals-to-save
-      (append '((extended-command-history . 128)
-                (file-name-history        . 128)
-                (ido-last-directory-list  . 128)
-                (ido-work-directory-list  . 128)
-                (ido-work-file-list       . 128)
-                (grep-history             . 128)
-                (compile-history          . 128)
-                (minibuffer-history       . 128)
-                (query-replace-history    . 128)
-                (read-expression-history  . 128)
-                (regexp-history           . 128)
-                (regexp-search-ring       . 128)
-                (search-ring              . 128)
-                (comint-input-ring        . 128)
-                (shell-command-history    . 128)
-                (evil-ex                  . 128)
-                desktop-missing-file-warning
-                register-alist)))
-
-;;----------------------------------------------------------------------------
-;; Configure dired
-;;----------------------------------------------------------------------------
 (setq-default dired-details-hidden-string "")
-(require 'dired+)
 (define-key dired-mode-map "(" 'dired-details-toggle)
 (define-key dired-mode-map ")" 'dired-details-toggle)
 (define-key dired-mode-map "/" 'dired-isearch-filenames)
@@ -409,27 +335,216 @@
 (add-to-list 'dired-guess-shell-alist-default
             (list (concat "\\." (regexp-opt (cdr file) t) "$") (car file))))
 
+
+;;----------------------------------------------------------------------------
+;; Minibuffer
+;;----------------------------------------------------------------------------
+(defvar minibuffer-packages '(ido) "Package list for minibuffer enhancement")
+(load-package-layer minibuffer-packages)
+
+(ido-mode t)
+(ido-everywhere t)
+(setq ido-enable-flex-matching t)
+(setq ido-use-virtual-buffers t)
+(setq backup-directory-alist `((".*" . ,temporary-file-directory)))
+(setq auto-save-file-name-transforms `((".*" ,temporary-file-directory t)))
+(setq ido-use-faces nil)
+(setq ido-use-filename-at-point nil)
+(setq ido-auto-merge-work-directories-length 0)
+;; Allow the same buffer to be open in different frames
+(setq ido-default-buffer-method 'selected-window)
+
+;; Smex
+(setq smex-save-file (expand-file-name ".smex-items" user-emacs-directory))
+(smex-initialize)
+(global-set-key (kbd "M-x") 'smex)
+(global-set-key (kbd "M-Z") 'smex-major-mode-commands)
+
+
+;;----------------------------------------------------------------------------
+;; Autocomplete
+;;----------------------------------------------------------------------------
+(defvar autocomplete-packages '(company) "Package list for autocomplete")
+(load-package-layer autocomplete-packages)
+
+(icomplete-mode 1)
+(setq read-buffer-completion-ignore-case t)
+(setq completion-ignore-case t)
+
+(ac-config-default)
+(add-hook 'prog-mode-hook 'global-company-mode)
+(add-hook 'cmake-mode-hook 'global-company-mode)
+(if (fboundp 'evil-declare-change-repeat)
+    (mapc #'evil-declare-change-repeat
+          '(company-complete-common
+            company-select-next
+            company-select-previous
+            company-complete-selection
+            company-complete-number
+            )))
+
+(global-set-key [C-tab] 'hippie-expand)
+(global-set-key [backtab] "\C-q\t") ;; S-tab quotes a tab
+
+
+;;----------------------------------------------------------------------------
+;; File
+;;----------------------------------------------------------------------------
+(defvar file-packages '(vlf) "Package list for file op.")
+(load-package-layer file-packages)
+(setq vlf-batch-size 10000000)
+
+;; Find-file-in-project (ffip).
+(autoload 'find-file-in-project "find-file-in-project" "" t)
+(autoload 'find-file-in-project-by-selected "find-file-in-project" "" t)
+(autoload 'ffip-get-project-root-directory "find-file-in-project" "" t)
+
+;; Autosaves
+(setq auto-save-mode t)
+(setq version-control t)
+(setq delete-old-versions t)
+(setq vc-make-backup-files t)
+(setq kept-old-versions 5)
+(setq kept-new-versions 5)
+
+
+;;----------------------------------------------------------------------------
+;; Buffer
+;;----------------------------------------------------------------------------
+(setq read-file-name-completion-ignore-case t)
+(defalias 'list-buffers 'ibuffer)
+
+
+;;----------------------------------------------------------------------------
+;; Terminal
+;;----------------------------------------------------------------------------
+;; Set shell
+(defvar my-term-shell "/bin/zsh")
+(defadvice ansi-term (before force-bash) (interactive (list my-term-shell)))
+(ad-activate 'ansi-term)
+
+;; utf8
+(defun my-term-use-utf8 () (set-buffer-process-coding-system 'utf-8-unix 'utf-8-unix))
+(add-hook 'term-exec-hook 'my-term-use-utf8)
+
+
+;;----------------------------------------------------------------------------
+;; Syntax
+;;----------------------------------------------------------------------------
+(defvar syntax-packages '(flymake) "Package list for syntax check")
+(load-package-layer syntax-packages)
+
+;; To see at most the first 3 errors for a line
+(setq flymake-number-of-errors-to-display 3)
+
+;; Let's run 2 checks at once
+(setq flymake-max-parallel-syntax-checks 2)
+(setq flymake-gui-warnings-enabled nil)
+
+;; Debug
+(setq gdb-many-windows t)
+(setq gdb-show-main t)
+
+
+;;----------------------------------------------------------------------------
+;; Spell
+;;----------------------------------------------------------------------------
+(defvar spell-packages '(flyspell-lazy) "Package list for spell check")
+(load-package-layer spell-packages)
+
+(flyspell-mode 1)
+(flyspell-prog-mode)
+(flyspell-lazy-mode 1)
+(setq flyspell-issue-message-flag nil)
+(setq-default ispell-list-command "list")
+
+(cond
+ ((executable-find "aspell") (setq ispell-program-name "aspell"))
+ ((executable-find "hunspell") (setq ispell-program-name "hunspell")
+   ;; just reset dictionary to the safe one "en_US" for hunspell.
+   ;; if we need use different dictionary, we specify it in command line arguments
+   (setq ispell-local-dictionary "en_US")
+   (setq ispell-local-dictionary-alist '(("en_US" "[[:alpha:]]" "[^[:alpha:]]" "[']" nil nil nil utf-8))))
+ (t (setq ispell-program-name nil) (message "You need install either aspell or hunspell for ispell")))
+
+;; ispell-cmd-args is useless, it's the list of *extra* command line arguments
+;; we will append to the ispell process when ispell-send-string()
+;; ispell-extra-args is the command arguments which will *always* be used when start ispell process
+(defadvice ispell-word (around my-ispell-word activate)
+  (let ((old-ispell-extra-args ispell-extra-args))
+    (ispell-kill-ispell t)
+    ;; use Emacs original arguments
+    (setq ispell-extra-args (flyspell-detect-ispell-args))
+    ad-do-it
+    ;; restore our own ispell arguments
+    (setq ispell-extra-args old-ispell-extra-args)
+    (ispell-kill-ispell t)))
+
+(defadvice flyspell-auto-correct-word (around my-flyspell-auto-correct-word activate)
+  (let ((old-ispell-extra-args ispell-extra-args))
+    (ispell-kill-ispell t)
+    ;; use Emacs original arguments
+    (setq ispell-extra-args (flyspell-detect-ispell-args))
+    ad-do-it
+    ;; restore our own ispell arguments
+    (setq ispell-extra-args old-ispell-extra-args)
+    (ispell-kill-ispell t)))
+
+
+;;----------------------------------------------------------------------------
+;; Theme things
+;;----------------------------------------------------------------------------
+(defvar theme-packages '(monokai-theme
+                         color-theme
+                         ) "Package list for themes")
+(load-package-layer theme-packages)
+
+;; Custom sets
+(custom-set-variables
+ '(safe-local-variable-values (quote ((lentic-init . lentic-orgel-org-init))))
+ '(session-use-package t nil (session)))
+(custom-set-faces
+ '(window-numbering-face ((t (:foreground "DeepPink" :underline "DeepPink" :weight bold))) t))
+
+
+;;----------------------------------------------------------------------------
+;; Julia
+;;----------------------------------------------------------------------------
+(defvar julia-packages '(ess-site
+                         julia-mode
+                         ;; julia-shell
+                         ;; julia-shell-mode
+                         ) "Package list for Julia")
+(load-package-layer julia-packages)
+
+;; (define-key julia-mode-map (kbd "C-c C-c") 'julia-shell-run-region-or-line)
+;; (define-key julia-mode-map (kbd "C-c C-s") 'julia-shell-save-and-go)
+
+
 ;;----------------------------------------------------------------------------
 ;; Org Settings
 ;;----------------------------------------------------------------------------
-(require 'org)
-(require 'ob)
-(require 'org-install)
-(require 'org-habit)
-(require 'ob-tangle)
+(defvar orgmode-packages '(org
+                           ob
+                           org-install
+                           org-habit
+                           ob-tangle
+                           ) "Package list for orgmode")
+(load-package-layer orgmode-packages)
 
 ;; Enable logging when tasks are complete.
-(setq org-log-done t
-      org-todo-keywords '((sequence "TODO" "INPROGRESS" "DONE"))
-      org-todo-keyword-faces '(("INPROGRESS" . (:foreground "blue" :weight bold))))
+(setq org-log-done t)
+(setq org-todo-keywords '((sequence "TODO" "INPROGRESS" "DONE")))
+(setq org-todo-keyword-faces '(("INPROGRESS" . (:foreground "blue" :weight bold))))
 (add-hook 'org-mode-hook (lambda () (flyspell-mode)))
 (add-hook 'org-mode-hook (lambda () (writegood-mode)))
 
 ;; Config org-agenda
 (global-set-key (kbd "C-c a") 'org-agenda)
-(setq org-agenda-show-log t
-      org-agenda-todo-ignore-scheduled t
-      org-agenda-todo-ignore-deadlines t)
+(setq org-agenda-show-log t)
+(setq org-agenda-todo-ignore-scheduled t)
+(setq org-agenda-todo-ignore-deadlines t)
+
 ;; Fuck the GFW to use Dropbox
 (setq org-agenda-files (list "~/Dropbox/org/personal.org"
                              "~/Dropbox/org/groupons.org"))
@@ -488,13 +603,13 @@
    (sh . t)
    (perl . t)
    (ruby . t)
-   ))
+   )) ;; (julit . t) does not work well, tooo bad
 
 ;; No prompts when runing codes
 (add-hook 'org-babel-after-execute-hook 'org-display-inline-images)
 (add-hook 'org-mode-hook 'org-display-inline-images)
-(setq org-src-fontify-natively t
-      org-confirm-babel-evaluate nil)
+(setq org-src-fontify-natively t)
+(setq org-confirm-babel-evaluate nil)
 
 (add-hook 'org-babel-after-execute-hook
           (lambda () (condition-case nil (org-display-inline-images) (error nil)))
@@ -502,300 +617,9 @@
 
 (add-hook 'org-mode-hook (lambda () (abbrev-mode 1)))
 
-;;----------------------------------------------------------------------------
-;; Deft
-;;----------------------------------------------------------------------------
-(setq deft-directory "~/Dropbox/deft")
-(setq deft-use-filename-as-title t)
-(setq deft-extension "org")
-(setq deft-text-mode 'org-mode)
 
 ;;----------------------------------------------------------------------------
-;; Smex
-;;----------------------------------------------------------------------------
-(setq smex-save-file (expand-file-name ".smex-items" user-emacs-directory))
-(smex-initialize)
-(global-set-key (kbd "M-x") 'smex)
-(global-set-key (kbd "M-Z") 'smex-major-mode-commands)
-
-;;----------------------------------------------------------------------------
-;; Ido
-;;----------------------------------------------------------------------------
-(require 'ido)
-(ido-mode t)
-(ido-everywhere t)
-(setq ido-enable-flex-matching t)
-(setq ido-use-virtual-buffers t)
-(setq backup-directory-alist `((".*" . ,temporary-file-directory)))
-(setq auto-save-file-name-transforms `((".*" ,temporary-file-directory t)))
-(setq ido-use-faces nil)
-(setq ido-use-filename-at-point nil)
-(setq ido-auto-merge-work-directories-length 0)
-;; Allow the same buffer to be open in different frames
-(setq ido-default-buffer-method 'selected-window)
-
-;;----------------------------------------------------------------------------
-;; Autopair
-;;----------------------------------------------------------------------------
-(require 'autopair)
-(autopair-global-mode)
-
-;;----------------------------------------------------------------------------
-;; Configure lisp
-;;----------------------------------------------------------------------------
-(require 'lisp-mode)
-(setq lisp-modes '(lisp-mode emacs-lisp-mode common-lisp-mode scheme-mode))
-
-(defvar lisp-power-map (make-keymap))
-(define-minor-mode lisp-power-mode "Fix keybindings; add power."
-  :lighter " (power)"
-  :keymap lisp-power-map
-  (paredit-mode t))
-(define-key lisp-power-map [delete] 'paredit-forward-delete)
-(define-key lisp-power-map [backspace] 'paredit-backward-delete)
-(defun engage-lisp-power () (lisp-power-mode t))
-
-(dolist (mode lisp-modes) (add-hook (intern (format "%s-hook" mode)) #'engage-lisp-power))
-
-(setq inferior-lisp-program "clisp")
-(setq scheme-program-name "racket")
-
-(let* ((lispy-hooks '(lisp-mode-hook inferior-lisp-mode-hook lisp-interaction-mode-hook))))
-
-(turn-on-eldoc-mode)
-(add-to-list 'auto-mode-alist '("\\.emacs-project\\'" . emacs-lisp-mode))
-(add-to-list 'auto-mode-alist '("archive-contents\\'" . emacs-lisp-mode))
-
-
-;;----------------------------------------------------------------------------
-;; Auto-complete
-;;----------------------------------------------------------------------------
-(require 'auto-complete-config)
-(ac-config-default)
-
-(require 'company)
-(add-hook 'prog-mode-hook 'global-company-mode)
-(add-hook 'cmake-mode-hook 'global-company-mode)
-(if (fboundp 'evil-declare-change-repeat)
-    (mapc #'evil-declare-change-repeat
-          '(company-complete-common
-            company-select-next
-            company-select-previous
-            company-complete-selection
-            company-complete-number
-            )))
-
-;;----------------------------------------------------------------------------
-;; Indentation and buffer cleanup
-;;----------------------------------------------------------------------------
-(defun untabify-buffer ()
-  (interactive)
-  (untabify (point-min) (point-max)))
-
-(defun indent-buffer ()
-  (interactive)
-  (indent-region (point-min) (point-max)))
-
-(defun cleanup-buffer ()
-  "Perform a bunch of operations on the whitespace content of a buffer."
-  (interactive)
-  (indent-buffer)
-  (untabify-buffer)
-  (delete-trailing-whitespace))
-
-(defun cleanup-region (beg end)
-  "Remove tmux artifacts from region."
-  (interactive "r")
-  (dolist (re '("\\\\│\·*\n" "\W*│\·*"))
-    (replace-regexp re "" nil beg end)))
-
-;; Clear buffer
-(put 'erase-buffer 'disabled nil)
-(defalias 'clear 'erase-buffer)
-
-;;----------------------------------------------------------------------------
-;; Configure misc modes
-;;----------------------------------------------------------------------------
-(add-to-list 'auto-mode-alist '("\\.bash_profile\\'" . sh-mode))
-(add-to-list 'auto-mode-alist '("\\.bash_history\\'" . sh-mode))
-(add-to-list 'auto-mode-alist '("\\.sh\\'" . sh-mode))
-(add-to-list 'auto-mode-alist '("\\.bash\\'" . sh-mode))
-(add-to-list 'auto-mode-alist '("\\.fish\\'" . sh-mode))
-(add-to-list 'auto-mode-alist '("\\.bashrc.local\\'" . sh-mode))
-(add-to-list 'auto-mode-alist '("\\.zsh\\'" . sh-mode))
-(add-to-list 'auto-mode-alist '("\\.bashrc\\'" . sh-mode))
-(add-to-list 'auto-mode-alist '("\\.gitconfig$" . conf-mode))
-
-;; yaml
-(add-to-list 'auto-mode-alist '("\\.yml$" . yaml-mode))
-(add-to-list 'auto-mode-alist '("\\.yaml$" . yaml-mode))
-
-;; markdown
-(add-to-list 'auto-mode-alist '("\\.md$" . markdown-mode))
-(add-to-list 'auto-mode-alist '("\\.mkd$" . markdown-mode))
-(add-to-list 'auto-mode-alist '("\\.mdown$" . markdown-mode))
-(add-hook 'markdown-mode-hook
-          (lambda ()
-            (visual-line-mode t)
-            (writegood-mode t)
-            (flyspell-mode t)))
-(setq markdown-command "pandoc --smart -f markdown -t pdf")
-(autoload 'markdown-mode "markdown-mode" "Mode for editing Markdown documents" t)
-
-;;----------------------------------------------------------------------------
-;; Configure VLF
-;;----------------------------------------------------------------------------
-(require 'vlf)
-(setq vlf-batch-size 10000000)
-
-(defun vlf-extract-part-of-file (file from to)
-  "returns bytes in file from from to to."
-  (let ((size (vlf-file-size file)))
-    (if (or (> from size)
-            (> to size))
-        (error "from or to is larger that the file size"))
-    (with-temp-buffer
-      (shell-command
-       (format "head --bytes %d %s | tail --bytes %d"
-           to file (+ (- to from) 1)) t)
-      (buffer-substring (point-min) (point-max)))))
-
-;;----------------------------------------------------------------------------
-;; Configure terminal
-;;----------------------------------------------------------------------------
-;; http://stackoverflow.com/questions/2886184/copy-paste-in-emacs-ansi-term-shell/2886539#2886539
-(defun ash-term-hooks ()
-  ;; dabbrev-expand in term
-  (define-key term-raw-escape-map "/"
-    (lambda ()
-      (interactive)
-      (let ((beg (point)))
-        (dabbrev-expand nil)
-        (kill-region beg (point)))
-      (term-send-raw-string (substring-no-properties (current-kill 0)))))
-  ;; yank in term (bound to C-c C-y)
-  (define-key term-raw-escape-map "\C-y"
-    (lambda ()
-      (interactive)
-      (term-send-raw-string (current-kill 0)))))
-(add-hook 'term-mode-hook 'ash-term-hooks)
-
-;; http://emacs-journey.blogspot.com.au/2012/06/improving-ansi-term.html
-;; kill the buffer when terminal is exited
-(defadvice term-sentinel (around my-advice-term-sentinel (proc msg))
-  (if (memq (process-status proc) '(signal exit))
-      (let ((buffer (process-buffer proc)))
-        ad-do-it
-        (kill-buffer buffer))
-    ad-do-it))
-(ad-activate 'term-sentinel)
-
-;; always use bash
-(defvar my-term-shell "/bin/zsh")
-(defadvice ansi-term (before force-bash)
-  (interactive (list my-term-shell)))
-(ad-activate 'ansi-term)
-
-;; utf8
-(defun my-term-use-utf8 ()
-  (set-buffer-process-coding-system 'utf-8-unix 'utf-8-unix))
-(add-hook 'term-exec-hook 'my-term-use-utf8)
-
-(shell)
-
-;;----------------------------------------------------------------------------
-;; Configure python
-;;----------------------------------------------------------------------------
-(autoload 'doctest-mode "doctest-mode" "Python doctest editing mode." t)
-(setq interpreter-mode-alist (cons '("python" . python-mode) interpreter-mode-alist))
-(defun python-mode-hook-setup ()
-  (unless (is-buffer-file-temp)
-    ;; run command `pip install jedi flake8 importmagic` in shell,
-    ;; or just check https://github.com/jorgenschaefer/elpy
-    (elpy-mode 1)
-    ;; http://emacs.stackexchange.com/questions/3322/python-auto-indent-problem/3338#3338
-    ;; emacs 24.4 only
-    (setq electric-indent-chars (delq ?: electric-indent-chars))
-    ))
-(add-hook 'python-mode-hook 'python-mode-hook-setup)
-
-;;----------------------------------------------------------------------------
-;; Configure golang...
-;;----------------------------------------------------------------------------
-;; install package
-(require 'go-mode)
-(require 'go-autocomplete)
-
-(defun go-mode-create-imenu-index ()
-"Create and return an imenu index alist. Unlike the default
-alist created by go-mode, this method creates an alist where
-items follow a style that is consistent with other prog-modes."
-  (let* ((patterns '(("type" "^type *\\([^ \t\n\r\f]*\\)" 1)))
-         (type-index (imenu--generic-function patterns))
-         (func-index))
-    (save-excursion
-      (goto-char (point-min))
-      (while (re-search-forward go-func-meth-regexp (point-max) t)
-        (let* ((var (match-string-no-properties 1))
-               (func (match-string-no-properties 2))
-               (name (if var
-                         (concat (substring var 0 -1) "." func)
-                       func))
-               (beg (match-beginning 0))
-               (marker (copy-marker beg))
-               (item (cons name marker)))
-          (setq func-index (cons item func-index)))))
-    (nconc type-index (list (cons "func" func-index)))))
-
-(defun go-mode-create-flat-imenu-index ()
-  "Return a flat imenu index alist. See `go-mode-create-imenu-index'."
-  (apply 'nconc (mapcar 'cdr (go-mode-create-imenu-index))))
-
-(add-hook 'go-mode-hook
-          (lambda ()
-            (go-eldoc-setup)
-            ;; C-c p runs gofmt on the buffer
-            (define-key go-mode-map (kbd "C-c p") 'gofmt)
-            ;; adjust fill-column
-            (setq-local fill-column 120)
-            ;; use flat imenu index
-            (setq-local imenu-create-index-function
-                        #'go-mode-create-flat-imenu-index)))
-
-;; run gofmt before saving file
-(add-hook 'before-save-hook 'gofmt-before-save)
-
-;; use goimports if available
-(when (executable-find "goimports") (setq gofmt-command "goimports"))
-
-;;----------------------------------------------------------------------------
-;; Configure ESS and Julia
-;;----------------------------------------------------------------------------
-(require 'ess-site)
-(add-to-list 'auto-mode-alist '("\\.[rR]\\'" . R-mode))
-;; https://github.com/kyleam/emacs.d/blob/master/lisp/init-ess.el
-
-(setq ess-smart-S-assign-key ";")
-(setq ess-use-ido nil)
-
-(define-abbrev-table 'ess-mode-abbrev-table
-  '(("true" "TRUE")
-    ("false" "FALSE"))
-  :system t)
-
-(dolist (hook '(ess-mode-hook inferior-ess-mode-hook))
-  (add-hook hook (lambda ()
-                   (setq local-abbrev-table ess-mode-abbrev-table)))
-  (add-hook hook 'abbrev-mode))
-
-;; (require 'julia-shell)
-(defun my-julia-mode-hooks () (require 'julia-shell-mode))
-(add-hook 'julia-mode-hook 'my-julia-mode-hooks)
-;; (define-key julia-mode-map (kbd "C-c C-c") 'julia-shell-run-region-or-line)
-;; (define-key julia-mode-map (kbd "C-c C-s") 'julia-shell-save-and-go)
-
-;;----------------------------------------------------------------------------
-;; Configure latex...
+;; LaTeX
 ;;----------------------------------------------------------------------------
 ;;; LaTeX
 ;; https://github.com/CestDiego/.emacs.d/blob/master/user-lisp/setup-latex.el
@@ -843,10 +667,10 @@ items follow a style that is consistent with other prog-modes."
 
 (add-hook 'LaTeX-mode-hook
           (lambda ()
-            (setq TeX-auto-untabify t     ; remove all tabs before saving
-                  TeX-engine 'xetex       ; use xelatex default
-                  TeX-show-compilation nil) ; display compilation windows
-            (TeX-global-PDF-mode t)       ; PDF mode enable, not plain
+            (setq TeX-auto-untabify t)      ; remove all tabs before saving
+            (setq TeX-engine 'xetex)        ; use xelatex default
+            (setq TeX-show-compilation nil) ; display compilation windows
+            (TeX-global-PDF-mode t)         ; PDF mode enable, not plain
             (setq TeX-save-query nil)
             (imenu-add-menubar-index)
             ;;(define-key LaTeX-mode-map (kbd "TAB") 'TeX-complete-symbol)
@@ -857,26 +681,11 @@ items follow a style that is consistent with other prog-modes."
  ;; settings for Linux
  (*linux*
   (cond
-   ((executable-find "okular")
-    (setq TeX-view-program-selection
-          '((output-pdf "Okular")
-            (output-dvi "Okular"))))
-   ((executable-find "evince")
-    (setq TeX-view-program-selection
-          '((output-pdf "Evince")
-            (output-dvi "Evince"))))
-   ((executable-find "zathura")
-    (setq TeX-view-program-selection
-          '((output-pdf "zathura")
-            (output-dvi "zathura"))))
-   ((executable-find "mupdf")
-    (setq TeX-view-program-selection
-          '((output-pdf "mupdf")
-            (output-dvi "mupdf"))))
-   (t
-    (setq TeX-view-program-selection
-          '((output-pdf "xdg-open")
-            (output-dvi "xdg-open")))))
+   ((executable-find "okular") (setq TeX-view-program-selection '((output-pdf "Okular") (output-dvi "Okular"))))
+   ((executable-find "evince") (setq TeX-view-program-selection '((output-pdf "Evince") (output-dvi "Evince"))))
+   ((executable-find "zathura") (setq TeX-view-program-selection '((output-pdf "zathura") (output-dvi "zathura"))))
+   ((executable-find "mupdf") (setq TeX-view-program-selection '((output-pdf "mupdf") (output-dvi "mupdf"))))
+   (t (setq TeX-view-program-selection '((output-pdf "xdg-open") (output-dvi "xdg-open")))))
    ))
 
 ;; configuration for TeX-fold-mode
@@ -907,144 +716,60 @@ items follow a style that is consistent with other prog-modes."
    '((?< ("\\leftarrow" "\\Leftarrow" "\\longleftarrow" "\\Longleftarrow"))
      (?> ("\\rightarrow" "\\Rightarrow" "\\longrightarrow" "\\Longrightarrow"))))
 
-;; insert latex math symbols
-;; (global-set-key (kbd "C-c m") 'latex-math-preview-insert-mathematical-symbol)
 
 ;;----------------------------------------------------------------------------
-;; Configure pandoc mode
+;; External configuration
 ;;----------------------------------------------------------------------------
-(add-hook 'markdown-mode-hook 'conditionally-turn-on-pandoc)
-(add-hook 'pandoc-mode-hook 'pandoc-load-default-settings)
+(setq custom-el (expand-file-name "custom.el" user-emacs-directory))
+(setq custom-org (expand-file-name "custom.org" user-emacs-directory))
 
-;;----------------------------------------------------------------------------
-;; Configure gnuplot...
-;;----------------------------------------------------------------------------
-(autoload 'gnuplot-mode "gnuplot" "gnuplot major mode" t)
-(autoload 'gnuplot-make-buffer "gnuplot" "open a buffer in gnuplot-mode" t)
-(setq auto-mode-alist (append '(("\\.gp$" . gnuplot-mode)) auto-mode-alist))
-
-(setq gnuplot-basic-offset 2)
-(setq gnuplot-context-sensitive-mode t)
-(setq gnuplot-inline-imge-mode t)
-
-;;----------------------------------------------------------------------------
-;; Configure haskell
-;;----------------------------------------------------------------------------
-(require 'haskell-mode)
-(setq haskell-font-lock-symbols t)
-(add-to-list 'auto-mode-alist '("\\.hs\\'" . haskell-mode))
-(add-to-list 'auto-mode-alist '("\\.lhs\\'" . literate-haskell-mode))
-(add-hook 'haskell-mode-hook
-          (lambda ()
-            (turn-on-haskell-doc-mode)
-            (turn-on-haskell-indent)))
-
-;;----------------------------------------------------------------------------
-;; Configure yasnippet
-;;----------------------------------------------------------------------------
-(require 'yasnippet)
-(setq yas/root-directory "~/.emacs.d/snippets")
-(yas/load-directory yas/root-directory)
-
-;;----------------------------------------------------------------------------
-;; Configure flymake
-;;----------------------------------------------------------------------------
-(require 'flymake)
-;; I want to see at most the first 4 errors for a line
-(setq flymake-number-of-errors-to-display 4)
-;; Let's run 2 checks at once instead.
-(setq flymake-max-parallel-syntax-checks 2)
-(setq flymake-gui-warnings-enabled nil)
-
-;;----------------------------------------------------------------------------
-;; Configure flyspell
-;;----------------------------------------------------------------------------
-(require 'flyspell-lazy)
-(flyspell-mode 1)
-(flyspell-prog-mode)
-(flyspell-lazy-mode 1)
-;; better performance:
-(setq flyspell-issue-message-flag nil)
-(setq-default ispell-list-command "list")
-
-(cond
- ((executable-find "aspell")
-  (setq ispell-program-name "aspell"))
- ((executable-find "hunspell")
-  (setq ispell-program-name "hunspell")
-  ;; just reset dictionary to the safe one "en_US" for hunspell.
-  ;; if we need use different dictionary, we specify it in command line arguments
-  (setq ispell-local-dictionary "en_US")
-  (setq ispell-local-dictionary-alist
-        '(("en_US" "[[:alpha:]]" "[^[:alpha:]]" "[']" nil nil nil utf-8))))
- (t (setq ispell-program-name nil)
-    (message "You need install either aspell or hunspell for ispell")))
-
-;; ispell-cmd-args is useless, it's the list of *extra* command line arguments
-;; we will append to the ispell process when ispell-send-string()
-;; ispell-extra-args is the command arguments which will *always* be used when start ispell process
-(defadvice ispell-word (around my-ispell-word activate)
-  (let ((old-ispell-extra-args ispell-extra-args))
-    (ispell-kill-ispell t)
-    ;; use emacs original arguments
-    (setq ispell-extra-args (flyspell-detect-ispell-args))
-    ad-do-it
-    ;; restore our own ispell arguments
-    (setq ispell-extra-args old-ispell-extra-args)
-    (ispell-kill-ispell t)))
-
-(defadvice flyspell-auto-correct-word (around my-flyspell-auto-correct-word activate)
-  (let ((old-ispell-extra-args ispell-extra-args))
-    (ispell-kill-ispell t)
-    ;; use emacs original arguments
-    (setq ispell-extra-args (flyspell-detect-ispell-args))
-    ad-do-it
-    ;; restore our own ispell arguments
-    (setq ispell-extra-args old-ispell-extra-args)
-    (ispell-kill-ispell t)))
-
-;;----------------------------------------------------------------------------
-;; Color and theme things
-;;----------------------------------------------------------------------------
-(require 'color-theme)
-(require 'monokai-theme)
-;; work around color theme bug
-;; https://plus.google.com/106672400078851000780/posts/KhTgscKE8PM
-(defadvice load-theme (before disable-themes-first activate)
-  ;; diable all themes
-  (dolist (i custom-enabled-themes)
-    (disable-theme i)))
-
-;;----------------------------------------------------------------------------
-;; Language and location
-;;----------------------------------------------------------------------------
-;; configure locales (setting them too early doesn't work in X)
-(defun sanityinc/utf8-locale-p (v)
-  "Return whether locale string V relates to a utf-8 locale."
-  (and v (string-match "utf-8" v)))
-
-(defun locale-is-utf8-p ()
-  "Return t if the \"locale\" command or environment variables prefer utf-8."
-  (or (sanityinc/utf8-locale-p (and (executable-find "locale") (shell-command-to-string "locale")))
-      (sanityinc/utf8-locale-p (getenv "LC_ALL"))
-      (sanityinc/utf8-locale-p (getenv "LC_CTYPE"))
-      (sanityinc/utf8-locale-p (getenv "LANG"))))
-
-(when (or window-system (locale-is-utf8-p))
-  (setq locale-coding-system 'utf-8)
-  (set-default-coding-systems 'utf-8)
-  (unless (eq system-type 'windows-nt)
-    (set-selection-coding-system 'utf-8))
-  (prefer-coding-system 'utf-8))
-
-
-;;----------------------------------------------------------------------------
-;; Appendix
-;;----------------------------------------------------------------------------
 ;; The extra customs will be autoloaded.
 (when (and (not (file-exists-p custom-el)) (file-exists-p custom-org)) (org-babel-tangle-file custom-org))
 (when (file-exists-p custom-el) (load custom-el))
 
-;; All done
-(when (require 'time-date nil t) (message "Emacs startup time: %d seconds." (time-to-seconds (time-since emacs-load-start-time))))
-(message "\nInitialization finished. Welcome to PULSE powered %s, %s!\n" (invocation-name) (user-login-name))
+
+;;----------------------------------------------------------------------------
+;; Session
+;;----------------------------------------------------------------------------
+(defvar session-packages '(desktop
+                           saveplace
+                           ) "Package list for session managment")
+(load-package-layer session-packages)
+
+(desktop-save-mode)
+(setq-default save-place t)
+(add-hook 'after-init-hook 'session-initialize)
+
+;; recentf-mode
+(setq recentf-keep '(file-remote-p file-readable-p))
+(setq recentf-max-saved-items 1000)
+(setq recentf-exclude '("/tmp/" "/ssh:" "/sudo:" "/home/[a-z]\+/\\."))
+(recentf-mode 1)
+
+;; save a bunch of variables to the desktop file:
+(setq desktop-globals-to-save
+      (append '((extended-command-history . 128)
+                (file-name-history        . 128)
+                (ido-last-directory-list  . 128)
+                (ido-work-directory-list  . 128)
+                (ido-work-file-list       . 128)
+                (grep-history             . 128)
+                (compile-history          . 128)
+                (minibuffer-history       . 128)
+                (query-replace-history    . 128)
+                (read-expression-history  . 128)
+                (regexp-history           . 128)
+                (regexp-search-ring       . 128)
+                (search-ring              . 128)
+                (comint-input-ring        . 128)
+                (shell-command-history    . 128)
+                (evil-ex                  . 128)
+                desktop-missing-file-warning
+                register-alist)))
+
+;; Warmer welcomes
+(setq-default initial-scratch-message
+              (concat ";; Happy hacking in the PULSE powered " (or invocation-name "") ", " (or user-login-name "") "\n\n"))
+
+(message "Emacs session initialization finished in %d seconds." (time-to-seconds (time-since emacs-load-start-time)))
+(message "\nWelcome to PULSE powered %s, %s!\n" (invocation-name) (user-login-name))

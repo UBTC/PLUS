@@ -1,8 +1,0 @@
-# name : GET <url> {..}
-# key: GET
-# --
-GET${1:url}
-$2
-{
-${0:key: value}
-}
