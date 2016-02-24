@@ -31,7 +31,6 @@
 ;; (add-to-list 'exec-path (concat (getenv "GOPATH") "/bin"))
 
 ;; Architectures related
-(setq *win32* (eq system-type 'windows-nt))
 (setq *cygwin* (eq system-type 'cygwin))
 (setq *linux* (or (eq system-type 'gnu/linux) (eq system-type 'linux)))
 (setq *unix* (or *linux* (eq system-type 'usg-unix-v) (eq system-type 'berkeley-unix)))
@@ -77,19 +76,16 @@
 (defun check-elpa-packages (package &optional min-version no-refresh)
   "Ask elpa to install given PACKAGE."
   (if (package-installed-p package min-version) t
-    (if (or (assoc package package-archive-contents) no-refresh)
-        (package-install package)
+    (if (or (assoc package package-archive-contents) no-refresh) (package-install package)
       (progn
         (package-refresh-contents)
         (check-elpa-packages package min-version t)))))
 
-;; Use inner packages packed in lists
+;; Use packages packed in lists in each section/layer
 (defun load-package-layer (package-list)
+  "Load package layer for certain function."
   (loop for pkg in package-list
     collecting(require pkg)))
-
-;; a no-op function to bind to if you want to set a keystroke to null
-(defun void () "this is a no-op" (interactive))
 
 
 ;;----------------------------------------------------------------------------
@@ -242,14 +238,12 @@
 ;;----------------------------------------------------------------------------
 ;; Window frame
 (setq frame-title-format '("%b" " - PULSE powered Emacs"))
-(setq-default buffers-menu-max-size 30)
+(setq-default buffers-menu-max-size 25)
 
 ;; Bars
 (if (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
 (if (fboundp 'tool-bar-mode) (tool-bar-mode -1))
 (powerline-center-theme)
-(setq powerline-default-separator 'wave)
-(setq-default tooltip-delay 1.5)
 (setq scroll-step 1)
 (setq scroll-margin 5)
 (setq scroll-conservatively 100)
@@ -294,7 +288,7 @@
 (setq evil-default-cursor t)
 (evil-mode 1)
 
-; Make horizontal movement cross lines
+;; Make horizontal movement cross lines
 (setq-default evil-cross-lines t)
 
 ;; Make movement keys work like they should
@@ -486,10 +480,10 @@
 
 
 ;;----------------------------------------------------------------------------
-;; Theme things
+;; Themes
 ;;----------------------------------------------------------------------------
-(defvar theme-packages '(monokai-theme
-                         color-theme
+(defvar theme-packages '(color-theme
+                         monokai-theme
                          ) "Package list for themes")
 (load-package-layer theme-packages)
 
@@ -499,7 +493,7 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(default ((t (:family "Droid Sans Fallback" :foundry "unknown" :slant normal :weight normal :height 128 :width normal))))
+ '(default ((t (:family "Monospace" :foundry "unknown" :slant normal :weight normal :height 128 :width normal))))
  '(window-numbering-face ((t (:foreground "DeepPink" :underline "DeepPink" :weight bold))) t))
 
 
@@ -764,7 +758,7 @@
 
 ;; Warmer welcomes
 (setq-default initial-scratch-message
-              (concat ";; Happy hacking in the PULSE powered " (or invocation-name "") ", " (or user-login-name "") "\n\n"))
+              (concat ";; Happy hacking in PULSE powered " (or invocation-name "") ", " (or user-login-name "") "!\n\n"))
 
 (message "Emacs session initialization finished in %d seconds." (time-to-seconds (time-since emacs-load-start-time)))
 (message "\nWelcome to PULSE powered %s, %s!\n" (invocation-name) (user-login-name))
