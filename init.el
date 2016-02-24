@@ -17,6 +17,7 @@
 ;;
 ;; """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
+(require 'cl)
 
 ;;----------------------------------------------------------------------------
 ;; Environment
@@ -34,39 +35,9 @@
 (setq *cygwin* (eq system-type 'cygwin))
 (setq *linux* (or (eq system-type 'gnu/linux) (eq system-type 'linux)))
 (setq *unix* (or *linux* (eq system-type 'usg-unix-v) (eq system-type 'berkeley-unix)))
+(setq *macos* (eq system-type 'darwin))
+(setq *mswin* (eq system-type 'windows-nt) )
 (setq *macbook-pro-support-enabled* t)
-
-
-;;----------------------------------------------------------------------------
-;; Default globals
-;;----------------------------------------------------------------------------
-;; Common-lisp always
-(require 'cl)
-
-;; Since I end up using org-mode most of the time, set the default mode accordingly.
-(setq initial-major-mode 'org-mode)
-
-;; Text marking
-(transient-mark-mode t)
-(setq x-select-enable-clipboard t)
-
-;; Yes or no
-(defalias 'yes-or-no-p 'y-or-n-p)
-
-;; Record the start time
-(require 'time-date nil t)
-(setq emacs-load-start-time (current-time))
-(setq debug-on-error t)
-
-;; Increase garbage-collection threshold
-(setq-default gc-cons-threshold (* 1024 1024 16))
-(setq-default gc-cons-percentage 0.5)
-
-;; WWW
-(setq browse-url-mozilla-program "firefox")
-
-;; UTF
-(set-language-environment "utf-8")
 
 
 ;;----------------------------------------------------------------------------
@@ -89,6 +60,49 @@
 
 
 ;;----------------------------------------------------------------------------
+;; Globals
+;;----------------------------------------------------------------------------
+(defvar general-packages '(time-date) "Package list for global settings.")
+(load-package-layer general-packages)
+
+;; Since I end up using org-mode most of the time, set the default mode accordingly.
+(setq initial-major-mode 'org-mode)
+
+;; Text marking
+(transient-mark-mode t)
+(setq x-select-enable-clipboard t)
+(setq-default set-mark-command-repeat-pop t)
+
+;; Yes or no
+(defalias 'yes-or-no-p 'y-or-n-p)
+
+;; Record the start time
+(setq emacs-load-start-time (current-time))
+
+;; Increase garbage-collection threshold
+(setq-default gc-cons-threshold (* 1024 1024 16))
+(setq-default gc-cons-percentage 0.5)
+
+;; WWW
+(setq browse-url-mozilla-program "firefox")
+
+
+;;----------------------------------------------------------------------------
+;; Error?
+;;----------------------------------------------------------------------------
+;; Ediff
+(setq-default ediff-split-window-function 'split-window-horizontally)
+(setq-default ediff-window-setup-function 'ediff-setup-windows-plain)
+
+;; Autostart debug
+(setq debug-on-error t)
+
+;; GDB
+(setq gdb-many-windows t)
+(setq gdb-show-main t)
+
+
+;;----------------------------------------------------------------------------
 ;; Package Management
 ;;----------------------------------------------------------------------------
 (defvar package-packages '(package) "Package list for import more packages")
@@ -99,8 +113,7 @@
 (add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/"))
 (setq package-archive-enable-alist '(("melpa" deft magit)))
 
-(defvar my-elpa-packages '(ac-slime
-                           ace-jump-mode
+(defvar my-elpa-packages '(ace-jump-mode
                            browse-kill-ring
                            color-theme
                            company
@@ -120,7 +133,7 @@
                            smex
                            vlf
                            writegood-mode
-  ) "ELPA packages")
+  ) "my ELPA packages")
 
 (loop for pkg in my-elpa-packages
       collecting(check-elpa-packages pkg))
@@ -171,6 +184,9 @@
 (setq display-time-day-and-date t)
 (display-time)
 
+;; No visible bells
+(setq visible-bell nil)
+
 
 ;;----------------------------------------------------------------------------
 ;; Highlight
@@ -190,7 +206,7 @@
 (setq tab-width 4)
 (setq default-tab-width 4)
 (setq tab-always-indent 'complete)
-(setq-default indent-tabs-mode nil)
+(setq-default indent-tabs-mode t)
 (setq-default indicate-empty-lines t)
 (when (not indicate-empty-lines) (toggle-indicate-empty-lines))
 (setq next-line-add-newlines nil)
@@ -245,9 +261,10 @@
 (if (fboundp 'tool-bar-mode) (tool-bar-mode -1))
 (powerline-center-theme)
 (setq scroll-step 1)
-(setq scroll-margin 5)
+(setq scroll-margin 10)
 (setq scroll-conservatively 100)
 (setq-default compilation-scroll-output t)
+(setq-default grep-scroll-output t)
 
 
 ;;----------------------------------------------------------------------------
@@ -350,6 +367,7 @@
 (smex-initialize)
 (global-set-key (kbd "M-x") 'smex)
 (global-set-key (kbd "M-Z") 'smex-major-mode-commands)
+(global-set-key (kbd "C-c C-c M-x") 'execute-extended-command)
 
 ;; Buffers
 (setq read-file-name-completion-ignore-case t)
@@ -390,6 +408,7 @@
 (setq vlf-batch-size 10000000)
 
 ;; Find-file-in-project (ffip).
+(autoload 'ivy-read "ivy")
 (autoload 'find-file-in-project "find-file-in-project" "" t)
 (autoload 'find-file-in-project-by-selected "find-file-in-project" "" t)
 (autoload 'ffip-get-project-root-directory "find-file-in-project" "" t)
@@ -402,6 +421,27 @@
 (setq kept-old-versions 5)
 (setq kept-new-versions 5)
 
+;; Operate compressed files
+(auto-compression-mode 1)
+
+;; Show images
+(auto-image-file-mode)
+
+;; extract a part to a new file
+(defun extract-part-of-file (file from to)
+  "returns bytes in file from from to to."
+  (let ((size (vlf-file-size file)))
+    (if (or (> from size)
+            (> to size))
+        (error "from or to is larger that the file size"))
+    (with-temp-buffer
+      (shell-command
+       (format "head --bytes %d %s | tail --bytes %d"
+           to file (+ (- to from) 1)) t)
+      (buffer-substring (point-min) (point-max)))))
+
+;; Add new line at end of file? NO.
+(setq-default require-final-newline nil)
 
 ;;----------------------------------------------------------------------------
 ;; Terminal
@@ -411,8 +451,36 @@
 (defadvice ansi-term (before force-bash) (interactive (list my-term-shell)))
 (ad-activate 'ansi-term)
 
+(defun ash-term-hooks ()
+  ;; dabbrev-expand in term
+  ;; see http://stackoverflow.com/questions/2886184/copy-paste-in-emacs-ansi-term-shell/2886539#2886539
+  (define-key term-raw-escape-map "/"
+    (lambda ()
+      (interactive)
+      (let ((beg (point)))
+        (dabbrev-expand nil)
+        (kill-region beg (point)))
+      (term-send-raw-string (substring-no-properties (current-kill 0)))))
+  ;; yank in term (bound to C-c C-y)
+  (define-key term-raw-escape-map "\C-y"
+    (lambda ()
+      (interactive)
+      (term-send-raw-string (current-kill 0)))))
+(add-hook 'term-mode-hook 'ash-term-hooks)
+
+(defadvice term-sentinel (around my-advice-term-sentinel (proc msg))
+  ;; kill the buffer when terminal is exited
+  ;; see http://emacs-journey.blogspot.com.au/2012/06/improving-ansi-term.html
+  (if (memq (process-status proc) '(signal exit))
+      (let ((buffer (process-buffer proc)))
+        ad-do-it
+        (kill-buffer buffer))
+    ad-do-it))
+(ad-activate 'term-sentinel)
+
 ;; utf8
-(defun my-term-use-utf8 () (set-buffer-process-coding-system 'utf-8-unix 'utf-8-unix))
+(defun my-term-use-utf8 ()
+  (set-buffer-process-coding-system 'utf-8-unix 'utf-8-unix))
 (add-hook 'term-exec-hook 'my-term-use-utf8)
 
 
@@ -428,10 +496,6 @@
 ;; Let's run 2 checks at once
 (setq flymake-max-parallel-syntax-checks 2)
 (setq flymake-gui-warnings-enabled nil)
-
-;; Debug
-(setq gdb-many-windows t)
-(setq gdb-show-main t)
 
 
 ;;----------------------------------------------------------------------------
@@ -487,13 +551,18 @@
                          ) "Package list for themes")
 (load-package-layer theme-packages)
 
+(defadvice load-theme (before disable-themes-first activate)
+  ;; diable all themes, work around color theme bug
+  ;; see https://plus.google.com/106672400078851000780/posts/KhTgscKE8PM
+  (dolist (i custom-enabled-themes) (disable-theme i)))
+
 ;; Custom sets
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(default ((t (:family "Monospace" :foundry "unknown" :slant normal :weight normal :height 128 :width normal))))
+ '(default ((t (:family "Ubuntu Mono" :foundry "unknown" :slant normal :weight normal :height 128 :width normal))))
  '(window-numbering-face ((t (:foreground "DeepPink" :underline "DeepPink" :weight bold))) t))
 
 
@@ -506,6 +575,10 @@
                          ) "Package list for Julia")
 (load-package-layer julia-packages)
 
+(setq ess-use-ido t)
+
+(defun my-julia-mode-hooks () (require 'julia-shell-mode))
+(add-hook 'julia-mode-hook 'my-julia-mode-hooks)
 (define-key julia-mode-map (kbd "C-c C-c") 'julia-shell-run-region-or-line)
 (define-key julia-mode-map (kbd "C-c C-s") 'julia-shell-save-and-go)
 
@@ -561,7 +634,7 @@
      ;; org v8
      org-odt-preferred-output-format "doc"
      org-tags-column 80
-     ;; org-startup-indented t
+     org-startup-indented t
      ;; org 8.2.6 has some performance issue. Here is the workaround.
      ;; http://punchagan.muse-amuse.in/posts/how-i-learnt-to-use-emacs-profiler.html
      org-agenda-inhibit-startup t ;; ~50x speedup
@@ -595,16 +668,19 @@
    )) ;; (julit . t) does not work well, tooo bad
 
 ;; No prompts when runing codes
-(add-hook 'org-babel-after-execute-hook 'org-display-inline-images)
-(add-hook 'org-mode-hook 'org-display-inline-images)
-(setq org-src-fontify-natively t)
 (setq org-confirm-babel-evaluate nil)
 
+;; Show images
 (add-hook 'org-babel-after-execute-hook
           (lambda () (condition-case nil (org-display-inline-images) (error nil)))
           'append)
 
 (add-hook 'org-mode-hook (lambda () (abbrev-mode 1)))
+(add-hook 'org-babel-after-execute-hook 'org-display-inline-images)
+(add-hook 'org-mode-hook 'org-display-inline-images)
+
+;; Fonts
+(setq org-src-fontify-natively t)
 
 
 ;;----------------------------------------------------------------------------
@@ -653,6 +729,8 @@
             'TeX-source-correlate-mode
             'outline-minor-mode))
 
+(when (locate-library "auctex") (setq reftex-plug-into-AUCTeX t))
+
 (add-hook 'LaTeX-mode-hook
           (lambda ()
             (setq TeX-auto-untabify t)      ; remove all tabs before saving
@@ -661,7 +739,7 @@
             (TeX-global-PDF-mode t)         ; PDF mode enable, not plain
             (setq TeX-save-query nil)
             (imenu-add-menubar-index)
-            ;;(define-key LaTeX-mode-map (kbd "TAB") 'TeX-complete-symbol)
+            ;; (define-key LaTeX-mode-map (kbd "TAB") 'TeX-complete-symbol)
             ))
 
 ;; Mac OS X fallback to the "open" program as the default viewer for all types of files.
@@ -703,6 +781,30 @@
 (setq cdlatex-math-symbol-alist
    '((?< ("\\leftarrow" "\\Leftarrow" "\\longleftarrow" "\\Longleftarrow"))
      (?> ("\\rightarrow" "\\Rightarrow" "\\longrightarrow" "\\Longrightarrow"))))
+
+;; insert latex math symbols
+;; (global-set-key (kbd "C-c m") 'latex-math-preview-insert-mathematical-symbol)
+
+
+;;----------------------------------------------------------------------------
+;; Locales
+;;----------------------------------------------------------------------------
+(defun test-utf8-locale-p (v)
+  "Return whether locale string V relates to a utf-8 locale."
+  (and v (string-match "utf-8" v)))
+
+(defun locale-is-utf8-p ()
+  "Return t if the \"locale\" command or environment variables prefer utf-8."
+  (or (test-utf8-locale-p (and (executable-find "locale") (shell-command-to-string "locale")))
+      (test-utf8-locale-p (getenv "LC_ALL"))
+      (test-utf8-locale-p (getenv "LC_CTYPE"))
+      (test-utf8-locale-p (getenv "LANG"))))
+
+(when (or window-system (locale-is-utf8-p))
+  (setq locale-coding-system 'utf-8)
+  (set-default-coding-systems 'utf-8)
+  (unless *mswin* (set-selection-coding-system 'utf-8))
+  (prefer-coding-system 'utf-8))
 
 
 ;;----------------------------------------------------------------------------
@@ -759,6 +861,5 @@
 ;; Warmer welcomes
 (setq-default initial-scratch-message
               (concat ";; Happy hacking in PULSE powered " (or invocation-name "") ", " (or user-login-name "") "!\n\n"))
-
 (message "Emacs session initialization finished in %d seconds." (time-to-seconds (time-since emacs-load-start-time)))
 (message "\nWelcome to PULSE powered %s, %s!\n" (invocation-name) (user-login-name))
