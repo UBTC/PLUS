@@ -28,7 +28,7 @@
 ;; Always common lisp
 (require 'cl)
 
-;; Use package layers packed in each section
+;; Load package layers packed in each section
 (defun load-package-layer (package-list)
   "Load package layer for certain function."
   (loop for pkg in package-list
