@@ -5,6 +5,11 @@
 ;;
 ;; PULSE --- m.w.'s Emacs configurations (3G)
 ;;
+;; PULSE(
+;;   section1([pkg layer,] set layer),
+;;   section2([pkg layer,] set layer),
+;;   ...)
+;;
 ;; Based on Aaron Bedra's emacs.d
 ;;     https://github.com/abedra/emacs.d
 ;; Steve Purcell's emacs.d and Bin Chen's fork
@@ -17,7 +22,27 @@
 ;;
 ;; """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
+;;----------------------------------------------------------------------------
+;; Preparation
+;;----------------------------------------------------------------------------
+;; Always common lisp
 (require 'cl)
+
+;; Use package layers packed in each section
+(defun load-package-layer (package-list)
+  "Load package layer for certain function."
+  (loop for pkg in package-list
+    collecting(require pkg)))
+
+;; Check & install elpa packages
+(defun check-elpa-packages (package &optional min-version no-refresh)
+  "Ask elpa to install given PACKAGE."
+  (if (package-installed-p package min-version) t
+    (if (or (assoc package package-archive-contents) no-refresh) (package-install package)
+      (progn
+        (package-refresh-contents)
+        (check-elpa-packages package min-version t)))))
+
 
 ;;----------------------------------------------------------------------------
 ;; Environment
@@ -41,36 +66,16 @@
 
 
 ;;----------------------------------------------------------------------------
-;; Functions
+;; General section
 ;;----------------------------------------------------------------------------
-;; Check & install elpa packages
-(defun check-elpa-packages (package &optional min-version no-refresh)
-  "Ask elpa to install given PACKAGE."
-  (if (package-installed-p package min-version) t
-    (if (or (assoc package package-archive-contents) no-refresh) (package-install package)
-      (progn
-        (package-refresh-contents)
-        (check-elpa-packages package min-version t)))))
-
-;; Use packages packed in lists in each section/layer
-(defun load-package-layer (package-list)
-  "Load package layer for certain function."
-  (loop for pkg in package-list
-    collecting(require pkg)))
-
-
-;;----------------------------------------------------------------------------
-;; Globals
-;;----------------------------------------------------------------------------
-(defvar general-packages '(time-date) "Package list for global settings.")
-(load-package-layer general-packages)
+(defvar general-pkglayer '(time-date) "Package layer for global settings.")
+(load-package-layer general-pkglayer)
 
 ;; Since I end up using org-mode most of the time, set the default mode accordingly.
 (setq initial-major-mode 'org-mode)
 
 ;; Text marking
 (transient-mark-mode t)
-(setq x-select-enable-clipboard t)
 (setq-default set-mark-command-repeat-pop t)
 
 ;; Yes or no
@@ -88,12 +93,8 @@
 
 
 ;;----------------------------------------------------------------------------
-;; Error?
+;; Debug section
 ;;----------------------------------------------------------------------------
-;; Ediff
-(setq-default ediff-split-window-function 'split-window-horizontally)
-(setq-default ediff-window-setup-function 'ediff-setup-windows-plain)
-
 ;; Autostart debug
 (setq debug-on-error t)
 
@@ -103,10 +104,10 @@
 
 
 ;;----------------------------------------------------------------------------
-;; Package Management
+;; Package section
 ;;----------------------------------------------------------------------------
-(defvar package-packages '(package) "Package list for import more packages")
-(load-package-layer package-packages)
+(defvar package-pkglayer '(package) "Package layer for import more packages")
+(load-package-layer package-pkglayer)
 
 (package-initialize)
 (add-to-list 'package-archives '("marmalade" . "http://marmalade-repo.org/packages/"))
@@ -140,7 +141,7 @@
 
 
 ;;----------------------------------------------------------------------------
-;; Site packages
+;; Sitelisp section
 ;;----------------------------------------------------------------------------
 ;; Local packages are in site-lisp
 (defvar sitelisp-dir (expand-file-name "site-lisp" user-emacs-directory))
@@ -159,7 +160,7 @@
 
 
 ;;----------------------------------------------------------------------------
-;; Cursor settings
+;; Cursor section
 ;;----------------------------------------------------------------------------
 (delete-selection-mode t)
 (blink-cursor-mode -1)
@@ -170,7 +171,7 @@
 
 
 ;;----------------------------------------------------------------------------
-;; Hint
+;; Hint section
 ;;----------------------------------------------------------------------------
 ;; Pair
 (show-paren-mode t)
@@ -189,7 +190,7 @@
 
 
 ;;----------------------------------------------------------------------------
-;; Highlight
+;; Highlight section
 ;;----------------------------------------------------------------------------
 (setq-default grep-highlight-matches t)
 (autoload 'highlight-symbol "highlight-symbol" "" t)
@@ -201,7 +202,7 @@
 
 
 ;;----------------------------------------------------------------------------
-;; Indentation
+;; Indentation section
 ;;----------------------------------------------------------------------------
 (setq tab-width 4)
 (setq default-tab-width 4)
@@ -214,7 +215,7 @@
 
 
 ;;----------------------------------------------------------------------------
-;; Fold
+;; Fold section
 ;;----------------------------------------------------------------------------
 (load-library "hideshow")
 (setq-default case-fold-search t)
@@ -224,10 +225,11 @@
 
 
 ;;----------------------------------------------------------------------------
-;; Kill ring
+;; Killring section
 ;;----------------------------------------------------------------------------
-(defvar killring-packages '(browse-kill-ring) "Package list for browse killring")
-(load-package-layer killring-packages)
+(defvar killring-pkglayer '(browse-kill-ring) "Package layer for browse killring")
+(load-package-layer killring-pkglayer)
+
 (setq kill-ring-max 3000)
 (setq undo-limit 5000000)
 (browse-kill-ring-default-keybindings)
@@ -237,9 +239,12 @@
 (setq browse-kill-ring-show-preview nil)
 (browse-kill-ring-default-keybindings)
 
+;; Use system clipboard
+(setq x-select-enable-clipboard t)
+
 
 ;;----------------------------------------------------------------------------
-;; Spacing
+;; Spacing section
 ;;----------------------------------------------------------------------------
 (setq-default line-spacing 0.2)
 (setq-default truncate-lines nil)
@@ -250,7 +255,7 @@
 
 
 ;;----------------------------------------------------------------------------
-;; GUI
+;; GUI section
 ;;----------------------------------------------------------------------------
 ;; Window frame
 (setq frame-title-format '("%b" " - PULSE powered Emacs"))
@@ -268,7 +273,7 @@
 
 
 ;;----------------------------------------------------------------------------
-;; Jump
+;; Jump section
 ;;----------------------------------------------------------------------------
 (global-set-key (kbd "C->") 'ace-jump-mode)
 (global-set-key (kbd "C-<") 'find-function)
@@ -282,7 +287,7 @@
 
 
 ;;----------------------------------------------------------------------------
-;; Miscellaneous key bindings
+;; Keybindings section
 ;;----------------------------------------------------------------------------
 (global-set-key [f1]  'split-window-horizontally)
 (global-set-key [f2]  'split-window-vertically)
@@ -296,10 +301,10 @@
 
 
 ;;----------------------------------------------------------------------------
-;; Vim related
+;; Vim section
 ;;----------------------------------------------------------------------------
-(defvar vim-packages '(evil) "Package list for vim")
-(load-package-layer vim-packages)
+(defvar vim-pkglayer '(evil) "Package layer for vim")
+(load-package-layer vim-pkglayer)
 
 (setq evil-symbol-word-search t)
 (setq evil-default-cursor t)
@@ -320,10 +325,10 @@
 
 
 ;;----------------------------------------------------------------------------
-;; Directories op
+;; Directories section
 ;;----------------------------------------------------------------------------
-(defvar dir-packages '(dired+) "Package list for directories")
-(load-package-layer dir-packages)
+(defvar dir-pkglayer '(dired+) "Package layer for directories")
+(load-package-layer dir-pkglayer)
 
 (setq-default dired-details-hidden-string "")
 (define-key dired-mode-map "(" 'dired-details-toggle)
@@ -343,12 +348,19 @@
 (add-to-list 'dired-guess-shell-alist-default
             (list (concat "\\." (regexp-opt (cdr file) t) "$") (car file))))
 
+;; Find-file-in-project (ffip).
+(autoload 'find-file-in-project "find-file-in-project" "" t)
+(autoload 'find-file-in-project-by-selected "find-file-in-project" "" t)
+(autoload 'ffip-get-project-root-directory "find-file-in-project" "" t)
+
 
 ;;----------------------------------------------------------------------------
-;; Minibuffer
+;; Minibuffer section
 ;;----------------------------------------------------------------------------
-(defvar minibuffer-packages '(ido) "Package list for minibuffer enhancement")
-(load-package-layer minibuffer-packages)
+(defvar minibuffer-pkglayer '(ido) "Package layer for minibuffer enhancement")
+(load-package-layer minibuffer-pkglayer)
+
+(autoload 'ivy-read "ivy")
 
 (ido-mode t)
 (ido-everywhere t)
@@ -375,10 +387,10 @@
 
 
 ;;----------------------------------------------------------------------------
-;; Autocomplete
+;; Autocomplete section
 ;;----------------------------------------------------------------------------
-(defvar autocomplete-packages '(company) "Package list for autocomplete")
-(load-package-layer autocomplete-packages)
+(defvar autocomplete-pkglayer '(company) "Package layer for autocomplete")
+(load-package-layer autocomplete-pkglayer)
 
 (icomplete-mode 1)
 (setq read-buffer-completion-ignore-case t)
@@ -401,17 +413,12 @@
 
 
 ;;----------------------------------------------------------------------------
-;; File
+;; File section
 ;;----------------------------------------------------------------------------
-(defvar file-packages '(vlf) "Package list for file op.")
-(load-package-layer file-packages)
-(setq vlf-batch-size 10000000)
+(defvar file-pkglayer '(vlf) "Package layer for file op.")
+(load-package-layer file-pkglayer)
 
-;; Find-file-in-project (ffip).
-(autoload 'ivy-read "ivy")
-(autoload 'find-file-in-project "find-file-in-project" "" t)
-(autoload 'find-file-in-project-by-selected "find-file-in-project" "" t)
-(autoload 'ffip-get-project-root-directory "find-file-in-project" "" t)
+(setq vlf-batch-size 10000000)
 
 ;; Autosaves
 (setq auto-save-mode t)
@@ -431,20 +438,21 @@
 (defun extract-part-of-file (file from to)
   "returns bytes in file from from to to."
   (let ((size (vlf-file-size file)))
-    (if (or (> from size)
-            (> to size))
-        (error "from or to is larger that the file size"))
+    (if (or (> from size) (> to size)) (error "from or to is larger that the file size"))
     (with-temp-buffer
-      (shell-command
-       (format "head --bytes %d %s | tail --bytes %d"
-           to file (+ (- to from) 1)) t)
+      (shell-command (format "head --bytes %d %s | tail --bytes %d" to file (+ (- to from) 1)) t)
       (buffer-substring (point-min) (point-max)))))
 
 ;; Add new line at end of file? NO.
 (setq-default require-final-newline nil)
 
+;; Ediff
+(setq-default ediff-split-window-function 'split-window-horizontally)
+(setq-default ediff-window-setup-function 'ediff-setup-windows-plain)
+
+
 ;;----------------------------------------------------------------------------
-;; Terminal
+;; Terminal section
 ;;----------------------------------------------------------------------------
 ;; Set shell
 (defvar my-term-shell "/bin/zsh")
@@ -485,10 +493,10 @@
 
 
 ;;----------------------------------------------------------------------------
-;; Syntax
+;; Syntax section
 ;;----------------------------------------------------------------------------
-(defvar syntax-packages '(flymake) "Package list for syntax check")
-(load-package-layer syntax-packages)
+(defvar syntax-pkglayer '(flymake) "Package layer for syntax check")
+(load-package-layer syntax-pkglayer)
 
 ;; To see at most the first 3 errors for a line
 (setq flymake-number-of-errors-to-display 3)
@@ -499,10 +507,10 @@
 
 
 ;;----------------------------------------------------------------------------
-;; Spell
+;; Spell section
 ;;----------------------------------------------------------------------------
-(defvar spell-packages '(flyspell-lazy) "Package list for spell check")
-(load-package-layer spell-packages)
+(defvar spell-pkglayer '(flyspell-lazy) "Package layer for spell check")
+(load-package-layer spell-pkglayer)
 
 (flyspell-mode 1)
 (flyspell-prog-mode)
@@ -544,12 +552,12 @@
 
 
 ;;----------------------------------------------------------------------------
-;; Themes
+;; Themes section
 ;;----------------------------------------------------------------------------
-(defvar theme-packages '(color-theme
+(defvar theme-pkglayer '(color-theme
                          monokai-theme
-                         ) "Package list for themes")
-(load-package-layer theme-packages)
+                         ) "Package layer for themes")
+(load-package-layer theme-pkglayer)
 
 (defadvice load-theme (before disable-themes-first activate)
   ;; diable all themes, work around color theme bug
@@ -567,13 +575,13 @@
 
 
 ;;----------------------------------------------------------------------------
-;; Julia
+;; Julia section
 ;;----------------------------------------------------------------------------
-(defvar julia-packages '(ess-site
+(defvar julia-pkglayer '(ess-site
                          julia-mode
                          julia-shell
-                         ) "Package list for Julia")
-(load-package-layer julia-packages)
+                         ) "Package layer for Julia")
+(load-package-layer julia-pkglayer)
 
 (setq ess-use-ido t)
 
@@ -584,15 +592,15 @@
 
 
 ;;----------------------------------------------------------------------------
-;; Org Settings
+;; Org section
 ;;----------------------------------------------------------------------------
-(defvar orgmode-packages '(org
+(defvar orgmode-pkglayer '(org
                            ob
                            org-install
                            org-habit
                            ob-tangle
-                           ) "Package list for orgmode")
-(load-package-layer orgmode-packages)
+                           ) "Package layer for orgmode")
+(load-package-layer orgmode-pkglayer)
 
 ;; Enable logging when tasks are complete.
 (setq org-log-done t)
@@ -608,8 +616,7 @@
 (setq org-agenda-todo-ignore-deadlines t)
 
 ;; Fuck the GFW to use Dropbox
-(setq org-agenda-files (list "~/Dropbox/org/personal.org"
-                             "~/Dropbox/org/groupons.org"))
+(setq org-agenda-files (list "~/Dropbox/org/personal.org" "~/Dropbox/org/groupons.org"))
 
 (add-to-list 'org-modules "org-habit")
 (setq org-habit-preceding-days 7
@@ -634,7 +641,7 @@
      ;; org v8
      org-odt-preferred-output-format "doc"
      org-tags-column 80
-     org-startup-indented t
+     ;; org-startup-indented t
      ;; org 8.2.6 has some performance issue. Here is the workaround.
      ;; http://punchagan.muse-amuse.in/posts/how-i-learnt-to-use-emacs-profiler.html
      org-agenda-inhibit-startup t ;; ~50x speedup
@@ -684,7 +691,7 @@
 
 
 ;;----------------------------------------------------------------------------
-;; LaTeX
+;; LaTeX section
 ;;----------------------------------------------------------------------------
 ;; https://github.com/CestDiego/.emacs.d/blob/master/user-lisp/setup-latex.el
 ;; https://github.com/xyguo/emacs.d/blob/master/lisp/init-auctex.el
@@ -787,7 +794,7 @@
 
 
 ;;----------------------------------------------------------------------------
-;; Locales
+;; Locale section
 ;;----------------------------------------------------------------------------
 (defun test-utf8-locale-p (v)
   "Return whether locale string V relates to a utf-8 locale."
@@ -808,7 +815,7 @@
 
 
 ;;----------------------------------------------------------------------------
-;; External configuration
+;; Extension section
 ;;----------------------------------------------------------------------------
 (setq custom-el (expand-file-name "custom.el" user-emacs-directory))
 (setq custom-org (expand-file-name "custom.org" user-emacs-directory))
@@ -819,12 +826,12 @@
 
 
 ;;----------------------------------------------------------------------------
-;; Session
+;; Session section
 ;;----------------------------------------------------------------------------
-(defvar session-packages '(desktop
+(defvar session-pkglayer '(desktop
                            saveplace
-                           ) "Package list for session managment")
-(load-package-layer session-packages)
+                           ) "Package layer for session managment")
+(load-package-layer session-pkglayer)
 
 (desktop-save-mode 1)
 (setq-default save-place t)
