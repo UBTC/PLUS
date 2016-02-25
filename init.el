@@ -396,7 +396,6 @@
 (setq read-buffer-completion-ignore-case t)
 (setq completion-ignore-case t)
 
-(ac-config-default)
 (add-hook 'prog-mode-hook 'global-company-mode)
 (add-hook 'cmake-mode-hook 'global-company-mode)
 (if (fboundp 'evil-declare-change-repeat)
