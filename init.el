@@ -613,8 +613,8 @@
 (setq org-agenda-todo-ignore-scheduled t)
 (setq org-agenda-todo-ignore-deadlines t)
 
-;; Fuck the GFW to use Dropbox
-(setq org-agenda-files (list "~/Dropbox/org/personal.org" "~/Dropbox/org/groupons.org"))
+;; Load my orgs
+(setq org-agenda-files (list "~/MEGAsync/org/personal.org" "~/MEGAsync/org/groupons.org"))
 
 (add-to-list 'org-modules "org-habit")
 (setq org-habit-preceding-days 7
