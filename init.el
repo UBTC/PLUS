@@ -38,7 +38,8 @@
 (defun check-elpa-packages (package &optional min-version no-refresh)
   "Ask elpa to install given PACKAGE."
   (if (package-installed-p package min-version) t
-    (if (or (assoc package package-archive-contents) no-refresh) (package-install package)
+    (if (or (assoc package package-archive-contents) no-refresh)
+      (package-install package)
       (progn
         (package-refresh-contents)
         (check-elpa-packages package min-version t)))))
@@ -96,7 +97,7 @@
 ;; Debug section
 ;;----------------------------------------------------------------------------
 ;; Autostart debug
-(setq debug-on-error t)
+;; (setq debug-on-error t)
 
 ;; GDB
 (setq gdb-many-windows t)
@@ -129,7 +130,6 @@
                            monokai-theme
                            multiple-cursors
                            org
-                           powerline
                            session
                            smex
                            vlf
@@ -264,7 +264,6 @@
 ;; Bars
 (if (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
 (if (fboundp 'tool-bar-mode) (tool-bar-mode -1))
-(powerline-center-theme)
 (setq scroll-step 1)
 (setq scroll-margin 10)
 (setq scroll-conservatively 100)
