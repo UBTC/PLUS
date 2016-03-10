@@ -1,8 +1,8 @@
 PULSE
 =====
 
-m.w.'s [Emacs](https://www.gnu.org/software/emacs/) configuration.
-
+m.w.'s [Emacs](https://www.gnu.org/software/emacs/) configuration, which was inspired by
+    [Aaron Bedra's emacs.d](https://github.com/abedra/emacs.d) and [Bin Chen's emacs.d](https://github.com/redguardtoo/emacs.d).
 
 ## Directory structure
 - `~/.emacs.d/init.el` is the configuration entrance and the most important file.
@@ -12,7 +12,7 @@ m.w.'s [Emacs](https://www.gnu.org/software/emacs/) configuration.
 
 
 ## Modules
-**Julia and LaTeX are supported**
+**Golang, Python, Julia, markdown, orgmode, pandoc and LaTeX are supported**
 
 
 # Installation
@@ -34,6 +34,20 @@ External applications are optional, and can be installed through OS package mana
 - [apt-cyg](https://github.com/transcode-open/apt-cyg) for `Cygwin`,
 - [homebrew](https://github.com/mxcl/homebrew) for `Mac`, and
 - various `Linux` package managers (`apt-get` for `Ubuntu`, `yum` for `Redhat`, `pacman` for `Arch`, `emerge` for `Gentoo`, etc.)
+
+### golang platform
+- needed by `golang-mode`
+- install through OS package manager
+
+### python platform
+- needed by `python-mode`
+- install through OS package manager
+
+
+### pandoc platform
+- needed by `pandoc-mode`
+- install through OS package manager
+
 
 ### julia platform
 - needed by `julia-mode` and `julia-shell`

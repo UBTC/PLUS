@@ -10,12 +10,7 @@
 ;;   section2([pkg layer,] set layer),
 ;;   ...)
 ;;
-;; Based on Aaron Bedra's emacs.d
-;;     https://github.com/abedra/emacs.d
-;; Steve Purcell's emacs.d and Bin Chen's fork
-;;     https://github.com/purcell/emacs.d
-;;     https://github.com/redguardtoo/emacs.d
-;; and a lot of  other internet resources...
+;; Based on Bedra's emacs.d, Chen's emacs.d and other resources.
 ;;
 ;; COPYRIGHT, Mogei Wang, 2010-2016
 ;; https://github.com/ubtc/PULSE
@@ -121,19 +116,25 @@
                            company
                            dired+
                            ebib
+                           elpy
                            ess
                            evil
                            flymake
                            flyspell-lazy
+                           go-mode
+                           idomenu
                            julia-mode
                            julia-shell
+                           markdown-mode
                            monokai-theme
                            multiple-cursors
                            org
+                           pandoc-mode
                            session
                            smex
                            vlf
                            writegood-mode
+
   ) "my ELPA packages")
 
 (loop for pkg in my-elpa-packages
@@ -590,6 +591,70 @@
 
 
 ;;----------------------------------------------------------------------------
+;; Python section
+;;----------------------------------------------------------------------------
+(autoload 'doctest-mode "doctest-mode" "Python doctest editing mode." t)
+(setq interpreter-mode-alist (cons '("python" . python-mode) interpreter-mode-alist))
+(defun python-mode-hook-setup ()
+  (unless (is-buffer-file-temp)
+    ;; run command `pip install jedi flake8 importmagic` in shell,
+    ;; or just check https://github.com/jorgenschaefer/elpy
+    (elpy-mode 1)
+    ;; http://emacs.stackexchange.com/questions/3322/python-auto-indent-problem/3338#3338
+    ;; emacs 24.4 only
+    (setq electric-indent-chars (delq ?: electric-indent-chars))
+    ))
+(add-hook 'python-mode-hook 'python-mode-hook-setup)
+
+
+;;----------------------------------------------------------------------------
+;; Golang section
+;;----------------------------------------------------------------------------
+(defvar golang-pkglayer '(go-mode) "Package layer for Golang")
+(load-package-layer golang-pkglayer)
+
+(defun go-mode-create-imenu-index ()
+  "Create and return an imenu index alist. Unlike the default
+alist created by go-mode, this method creates an alist where
+items follow a style that is consistent with other prog-modes."
+  (let* ((patterns '(("type" "^type *\\([^ \t\n\r\f]*\\)" 1)))
+         (type-index (imenu--generic-function patterns))
+         (func-index))
+    (save-excursion
+      (goto-char (point-min))
+      (while (re-search-forward go-func-meth-regexp (point-max) t)
+        (let* ((var (match-string-no-properties 1))
+               (func (match-string-no-properties 2))
+               (name (if var
+                         (concat (substring var 0 -1) "." func)
+                       func))
+               (beg (match-beginning 0))
+               (marker (copy-marker beg))
+               (item (cons name marker)))
+          (setq func-index (cons item func-index)))))
+    (nconc type-index (list (cons "func" func-index)))))
+
+(defun go-mode-create-flat-imenu-index ()
+  "Return a flat imenu index alist. See `go-mode-create-imenu-index'."
+  (apply 'nconc (mapcar 'cdr (go-mode-create-imenu-index))))
+
+(add-hook 'go-mode-hook
+          (lambda ()
+            ;; C-c p runs gofmt on the buffer
+            (define-key go-mode-map (kbd "C-c p") 'gofmt)
+            ;; adjust fill-column
+            (setq-local fill-column 120)
+            ;; use flat imenu index
+            (setq-local imenu-create-index-function #'go-mode-create-flat-imenu-index)))
+
+;; run gofmt before saving file
+(add-hook 'before-save-hook 'gofmt-before-save)
+
+;; use goimports if available
+(when (executable-find "goimports") (setq gofmt-command "goimports"))
+
+
+;;----------------------------------------------------------------------------
 ;; Org section
 ;;----------------------------------------------------------------------------
 (defvar orgmode-pkglayer '(org
@@ -686,6 +751,14 @@
 
 ;; Fonts
 (setq org-src-fontify-natively t)
+
+
+;;----------------------------------------------------------------------------
+;; Markdown section
+;;----------------------------------------------------------------------------
+(autoload 'markdown-mode "markdown-mode" "Mode for editing Markdown documents" t)
+(setq auto-mode-alist (cons '("\\.md" . markdown-mode) auto-mode-alist))
+(setq auto-mode-alist (cons '("\\.markdown" . markdown-mode) auto-mode-alist))
 
 
 ;;----------------------------------------------------------------------------
@@ -789,6 +862,13 @@
 
 ;; insert latex math symbols
 ;; (global-set-key (kbd "C-c m") 'latex-math-preview-insert-mathematical-symbol)
+
+
+;;----------------------------------------------------------------------------
+;; Pandoc secion
+;;----------------------------------------------------------------------------
+(add-hook 'markdown-mode-hook 'conditionally-turn-on-pandoc)
+(add-hook 'pandoc-mode-hook 'pandoc-load-default-settings)
 
 
 ;;----------------------------------------------------------------------------
