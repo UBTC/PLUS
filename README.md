@@ -12,7 +12,7 @@ m.w.'s [Emacs](https://www.gnu.org/software/emacs/) configuration, which was ins
 
 
 ## Modules
-**Golang, Python, Julia, markdown, orgmode, pandoc and LaTeX are supported**
+**Golang, Python, R, Julia, markdown, orgmode, pandoc and LaTeX are supported**
 
 
 # Installation
@@ -43,14 +43,16 @@ External applications are optional, and can be installed through OS package mana
 - needed by `python-mode`
 - install through OS package manager
 
-
-### pandoc platform
-- needed by `pandoc-mode`
+### R platform
+- needed by `ESS`
 - install through OS package manager
-
 
 ### julia platform
 - needed by `julia-mode` and `julia-shell`
+- install through OS package manager
+
+### pandoc platform
+- needed by `pandoc-mode`
 - install through OS package manager
 
 ### auctex, and xetex/latex
