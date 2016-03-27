@@ -123,6 +123,7 @@
                            flymake
                            flyspell-lazy
                            go-mode
+                           gnuplot-mode
                            idomenu
                            julia-mode
                            julia-shell
@@ -869,6 +870,20 @@ items follow a style that is consistent with other prog-modes."
 ;;----------------------------------------------------------------------------
 (add-hook 'markdown-mode-hook 'conditionally-turn-on-pandoc)
 (add-hook 'pandoc-mode-hook 'pandoc-load-default-settings)
+
+
+;;----------------------------------------------------------------------------
+;; gnuplot secion
+;;----------------------------------------------------------------------------
+(defvar gnuplot-pkglayer '(gnuplot-mode) "Package layer for gnuplot")
+(load-package-layer gnuplot-pkglayer)
+
+(autoload 'gnuplot-mode "gnuplot" "gnuplot major mode" t)
+(autoload 'gnuplot-make-buffer "gnuplot" "open a buffer in gnuplot-mode" t)
+(setq auto-mode-alist (append '(("\\.gp$" . gnuplot-mode)) auto-mode-alist))
+(setq gnuplot-basic-offset 2)
+(setq gnuplot-context-sensitive-mode t)
+(setq gnuplot-inline-imge-mode t)
 
 
 ;;----------------------------------------------------------------------------
