@@ -18,7 +18,6 @@
 ;;
 ;; """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
-
 ;;----------------------------------------------------------------------------
 ;; Preparation
 ;;----------------------------------------------------------------------------
@@ -215,7 +214,6 @@
 (when (not indicate-empty-lines) (toggle-indicate-empty-lines))
 (setq next-line-add-newlines nil)
 (global-set-key (kbd "RET") 'newline-and-indent)
-
 
 ;;----------------------------------------------------------------------------
 ;; Fold section
@@ -601,7 +599,7 @@
 (setq interpreter-mode-alist (cons '("python" . python-mode) interpreter-mode-alist))
 (defun python-mode-hook-setup ()
   (unless (is-buffer-file-temp)
-    ;; use `pip` or `pip3` to install `jedi flake8 importmagic`
+    ;; run command `pip install jedi flake8 importmagic` in shell,
     ;; or just check https://github.com/jorgenschaefer/elpy
     (elpy-mode 1)
     ;; http://emacs.stackexchange.com/questions/3322/python-auto-indent-problem/3338#3338
@@ -609,6 +607,13 @@
     (setq electric-indent-chars (delq ?: electric-indent-chars))
     ))
 (add-hook 'python-mode-hook 'python-mode-hook-setup)
+
+
+;;----------------------------------------------------------------------------
+;; Clang section
+;;----------------------------------------------------------------------------
+(setq c-default-style "linux")
+(setq c-basic-offset 4)
 
 
 ;;----------------------------------------------------------------------------
@@ -720,7 +725,7 @@ items follow a style that is consistent with other prog-modes."
 (setq org-clock-into-drawer t)
 ;; Removes clocked tasks with 0:00 duration
 (setq org-clock-out-remove-zero-time-clocks t)
-;; Do not auto truncate, auto wrap (fill) instead.
+;; Do not auto truncate
 (setq org-startup-truncated nil)
 
 ;; babel-exec
@@ -960,10 +965,7 @@ items follow a style that is consistent with other prog-modes."
                 desktop-missing-file-warning
                 register-alist)))
 
-
-;;----------------------------------------------------------------------------
-;; Termination
-;;----------------------------------------------------------------------------
+;; Warmer welcomes
 (setq-default initial-scratch-message
               (concat ";; Happy hacking in PULSE powered " (or invocation-name "") ", " (or user-login-name "") "!\n\n"))
 (message "Emacs session initialization finished in %d seconds." (time-to-seconds (time-since emacs-load-start-time)))
