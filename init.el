@@ -599,7 +599,7 @@
 (setq interpreter-mode-alist (cons '("python" . python-mode) interpreter-mode-alist))
 (defun python-mode-hook-setup ()
   (unless (is-buffer-file-temp)
-    ;; run command `pip install jedi flake8 importmagic` in shell,
+    ;; use `pip` or `pip3` to install `jedi flake8 importmagic`
     ;; or just check https://github.com/jorgenschaefer/elpy
     (elpy-mode 1)
     ;; http://emacs.stackexchange.com/questions/3322/python-auto-indent-problem/3338#3338
@@ -725,7 +725,7 @@ items follow a style that is consistent with other prog-modes."
 (setq org-clock-into-drawer t)
 ;; Removes clocked tasks with 0:00 duration
 (setq org-clock-out-remove-zero-time-clocks t)
-;; Do not auto truncate
+;; Do not auto truncate, auto wrap (fill) instead.
 (setq org-startup-truncated nil)
 
 ;; babel-exec
@@ -965,7 +965,10 @@ items follow a style that is consistent with other prog-modes."
                 desktop-missing-file-warning
                 register-alist)))
 
-;; Warmer welcomes
+
+;;----------------------------------------------------------------------------
+;; Termination
+;;----------------------------------------------------------------------------
 (setq-default initial-scratch-message
               (concat ";; Happy hacking in PULSE powered " (or invocation-name "") ", " (or user-login-name "") "!\n\n"))
 (message "Emacs session initialization finished in %d seconds." (time-to-seconds (time-since emacs-load-start-time)))
