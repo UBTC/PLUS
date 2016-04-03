@@ -780,7 +780,7 @@ items follow a style that is consistent with other prog-modes."
 ;;----------------------------------------------------------------------------
 ;; LaTeX section
 ;;----------------------------------------------------------------------------
-(defvar latex-pkglayer '(org-export-latex) "Package layer for LaTeX")
+(defvar latex-pkglayer '(ox-latex) "Package layer for LaTeX")
 (load-package-layer latex-pkglayer)
 
 ;; https://github.com/CestDiego/.emacs.d/blob/master/user-lisp/setup-latex.el
@@ -882,7 +882,7 @@ items follow a style that is consistent with other prog-modes."
 ;; (global-set-key (kbd "C-c m") 'latex-math-preview-insert-mathematical-symbol)
 
 ; http://home.fnal.gov/~neilsen/notebook/emacs.html
-(add-to-list 'org-export-latex-classes
+(add-to-list 'org-latex-classes
 '("smarticle"
  "\\documentclass[10pt]{article}
 \\usepackage[utf8]{inputenc}
