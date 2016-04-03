@@ -780,6 +780,9 @@ items follow a style that is consistent with other prog-modes."
 ;;----------------------------------------------------------------------------
 ;; LaTeX section
 ;;----------------------------------------------------------------------------
+(defvar latex-pkglayer '(org-export-latex) "Package layer for LaTeX")
+(load-package-layer latex-pkglayer)
+
 ;; https://github.com/CestDiego/.emacs.d/blob/master/user-lisp/setup-latex.el
 ;; https://github.com/xyguo/emacs.d/blob/master/lisp/init-auctex.el
 ;; https://github.com/xiaohanyu/oh-my-emacs/blob/master/modules/ome-tex.org
@@ -877,6 +880,22 @@ items follow a style that is consistent with other prog-modes."
 
 ;; insert latex math symbols
 ;; (global-set-key (kbd "C-c m") 'latex-math-preview-insert-mathematical-symbol)
+
+; http://home.fnal.gov/~neilsen/notebook/emacs.html
+(add-to-list 'org-export-latex-classes
+'("smarticle"
+ "\\documentclass[10pt]{article}
+\\usepackage[utf8]{inputenc}
+\\usepackage[T1]{fontenc}
+\\usepackage{graphicx}
+\\usepackage{longtable}
+\\usepackage{hyperref}
+\\usepackage[left=1in,top=1in,right=1in,bottom=1in,head=0.2in,foot=0.2in]{geometry}"
+ ("\\section{%s}" . "\\section*{%s}")
+ ("\\subsection{%s}" . "\\subsection*{%s}")
+ ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+     ("\\paragraph{%s}" . "\\paragraph*{%s}")
+     ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
 
 
 ;;----------------------------------------------------------------------------
