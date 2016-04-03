@@ -1,35 +1,35 @@
 PULSE
 =====
 
-
 m.w.'s [Emacs](https://www.gnu.org/software/emacs/) configuration, which was inspired by
     [Aaron Bedra's emacs.d](https://github.com/abedra/emacs.d) and [Bin Chen's emacs.d](https://github.com/redguardtoo/emacs.d).
 
-
 ## Directory structure
 - `~/.emacs.d/init.el` is the configuration entrance.
-- `~/.emacs.d/custom.el` includes some extra configurations (`custom.org` also works).
-- `~/.emacs.d/site-lisp/` collects the packages that are NOT maintained by package manager `elpa`.
+- `~/.emacs.d/custom.el` includes user's personal configurations (`custom.org` also works).
+- `~/.emacs.d/sitelisp/` collects the packages that are NOT maintained by package manager `elpa`.
+- `~/.emacs.d/snippets/` collects [the official snippets of yasnippet](https://github.com/AndreaCrotti/yasnippet-snippets).
 - `~/.emacs.d/elpa/` and the other things will be auto-maintained by `elpa` or the other packages.
-
 
 ## Modules
 **Golang, Python, Julia, LaTeX, orgmode, markdown, pandoc, R and gnuplot are supported**
 
-
 # Installation
 1. Backup the current `Emacs` configuration, e.g., the file `~/.emacs` or the folder `~/.emacs.d/`.
 1. Uninstall all systematic `Emacs` plugins. All plugins will be placed at `~/.emacs.d` from now on.
-1. Run command
+1. Clone `PULSE`
 
-    `cd ~; git clone https://github.com/ubtc/pulse.git ~/.emacs.d`
+    `cd ~; git clone https://github.com/ubtc/pulse.git ~/.emacs.d; cd -`
+
+1. Clone `snippets`
+
+    `cd ~/.emacs.d/; git clone https://github.com/AndreaCrotti/yasnippet-snippets snippets; cd -`
 
 1. Run the following command to fetch the latest packages from remote package repositories:
 
     `emacs -nw --batch -l ~/.emacs.d/init.el -f package-refresh-contents`
 
 1. That's all.
-
 
 ## Third party tools installation (OPTIONAL)
 External applications are optional, and can be installed through OS package managers, i.e.,

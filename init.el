@@ -44,10 +44,6 @@
 ;;----------------------------------------------------------------------------
 ;; Environment
 ;;----------------------------------------------------------------------------
-;; User infomation
-(setq user-full-name "Mogei Wang")
-(setq user-mail-address "mogeiwang@gmail.com")
-
 ;; Pathes
 (setenv "PATH" (concat "/usr/local/bin:/opt:/usr/bin:/bin" (getenv "PATH")))
 ;; (setenv "GOPATH" (concat (getenv "HOME") "/goWork"))
@@ -145,8 +141,8 @@
 ;;----------------------------------------------------------------------------
 ;; Sitelisp section
 ;;----------------------------------------------------------------------------
-;; Local packages are in site-lisp
-(defvar sitelisp-dir (expand-file-name "site-lisp" user-emacs-directory))
+;; Local packages are in sitelisp
+(defvar sitelisp-dir (expand-file-name "sitelisp" user-emacs-directory))
 (add-to-list 'load-path sitelisp-dir)
 
 ;; Load site packages
@@ -192,6 +188,17 @@
 
 
 ;;----------------------------------------------------------------------------
+;; Snippet section
+;;----------------------------------------------------------------------------
+(defvar snippet-pkglayer '(yasnippet) "Package layer for snippets")
+(load-package-layer snippet-pkglayer)
+
+(setq yas-snippet-dirs '("~/.emacs.d/snippets"))
+(yas-global-mode 1)
+(yas-reload-all)
+
+
+;;----------------------------------------------------------------------------
 ;; Highlight section
 ;;----------------------------------------------------------------------------
 (setq-default grep-highlight-matches t)
@@ -214,6 +221,7 @@
 (when (not indicate-empty-lines) (toggle-indicate-empty-lines))
 (setq next-line-add-newlines nil)
 (global-set-key (kbd "RET") 'newline-and-indent)
+
 
 ;;----------------------------------------------------------------------------
 ;; Fold section
@@ -568,10 +576,7 @@
 ;; Custom sets
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(default ((t (:family "Ubuntu Mono" :foundry "unknown" :slant normal :weight normal :height 128 :width normal))))
+ '(default ((t (:family "Ubuntu Mono" :foundry "unknown" :slant normal :weight normal :height 127 :width normal))))
  '(window-numbering-face ((t (:foreground "DeepPink" :underline "DeepPink" :weight bold))) t))
 
 
@@ -780,7 +785,7 @@ items follow a style that is consistent with other prog-modes."
 ;; https://github.com/xiaohanyu/oh-my-emacs/blob/master/modules/ome-tex.org
 
 ;; (add-to-list 'load-path "~/.emacs.d/lisp/auctex")
-;; (load "~/.emacs.d/site-lisp/auctex/auctex.el" nil t t)
+;; (load "~/.emacs.d/sitelisp/auctex/auctex.el" nil t t)
 ;; (when (locate-library "auctex") (setq reftex-plug-into-AUCTeX t))
 
 (global-set-key "\C-c b" 'ebib)
