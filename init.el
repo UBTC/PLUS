@@ -590,7 +590,8 @@
 (load-package-layer julia-pkglayer)
 
 (setq ess-use-ido t)
-
+(setq auto-mode-alist (cons '("\\.jl" . julia-mode) auto-mode-alist))
+(setq auto-mode-alist (cons '("\\.julia" . julia-mode) auto-mode-alist))
 (defun my-julia-mode-hooks () (require 'julia-shell-mode))
 (add-hook 'julia-mode-hook 'my-julia-mode-hooks)
 (define-key julia-mode-map (kbd "C-c C-c") 'julia-shell-run-region-or-line)
