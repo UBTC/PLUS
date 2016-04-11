@@ -589,7 +589,22 @@
                          ) "Package layer for Julia")
 (load-package-layer julia-pkglayer)
 
-(setq ess-use-ido t)
+;; R  https://github.com/kyleam/emacs.d/blob/master/lisp/init-ess.el
+(add-to-list 'auto-mode-alist '("\\.[rR]\\'" . R-mode))
+(autoload 'R-mode "ess-site")
+
+(setq ess-smart-S-assign-key ";")
+(setq ess-use-ido nil)
+
+(define-abbrev-table 'ess-mode-abbrev-table
+  '(("true" "TRUE") ("false" "FALSE"))
+  :system t)
+
+(dolist (hook '(ess-mode-hook inferior-ess-mode-hook))
+  (add-hook hook (lambda () (setq local-abbrev-table ess-mode-abbrev-table)))
+  (add-hook hook 'abbrev-mode))
+
+;; Julia
 (setq auto-mode-alist (cons '("\\.jl" . julia-mode) auto-mode-alist))
 (setq auto-mode-alist (cons '("\\.julia" . julia-mode) auto-mode-alist))
 (defun my-julia-mode-hooks () (require 'julia-shell-mode))
