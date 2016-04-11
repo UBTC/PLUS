@@ -581,32 +581,32 @@
 
 
 ;;----------------------------------------------------------------------------
-;; Julia section
+;; R section
 ;;----------------------------------------------------------------------------
-(defvar julia-pkglayer '(ess-site
-                         julia-mode
-                         julia-shell
-                         ) "Package layer for Julia")
-(load-package-layer julia-pkglayer)
-
-;; R  https://github.com/kyleam/emacs.d/blob/master/lisp/init-ess.el
+;; https://github.com/kyleam/emacs.d/blob/master/lisp/init-ess.el
 (add-to-list 'auto-mode-alist '("\\.[rR]\\'" . R-mode))
 (autoload 'R-mode "ess-site")
 
 (setq ess-smart-S-assign-key ";")
-(setq ess-use-ido nil)
+(setq ess-use-ido t)
 
-(define-abbrev-table 'ess-mode-abbrev-table
-  '(("true" "TRUE") ("false" "FALSE"))
-  :system t)
-
+(define-abbrev-table 'ess-mode-abbrev-table '(("true" "TRUE") ("false" "FALSE")) :system t)
 (dolist (hook '(ess-mode-hook inferior-ess-mode-hook))
   (add-hook hook (lambda () (setq local-abbrev-table ess-mode-abbrev-table)))
   (add-hook hook 'abbrev-mode))
 
-;; Julia
+
+;;----------------------------------------------------------------------------
+;; Julia section
+;;----------------------------------------------------------------------------
+(defvar julia-pkglayer '(julia-mode
+                         julia-shell
+                         ) "Package layer for Julia")
+(load-package-layer julia-pkglayer)
+
 (setq auto-mode-alist (cons '("\\.jl" . julia-mode) auto-mode-alist))
 (setq auto-mode-alist (cons '("\\.julia" . julia-mode) auto-mode-alist))
+(autoload 'julia-mode "ess-site")
 (defun my-julia-mode-hooks () (require 'julia-shell-mode))
 (add-hook 'julia-mode-hook 'my-julia-mode-hooks)
 (define-key julia-mode-map (kbd "C-c C-c") 'julia-shell-run-region-or-line)
