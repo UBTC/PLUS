@@ -756,6 +756,11 @@ items follow a style that is consistent with other prog-modes."
    (fortran . t)
    (gnuplot . t)
    (C . t)
+   (calc . t)
+   (ditaa . t)
+   (plantuml . t)
+   ;; (julit . t) ;; This does not work well, too bad.
+   ;; https://github.com/gjkerns/ob-julia/blob/master/ob-julia-doc.org
    (R . t)
    (latex . t)
    (java . t)
@@ -767,7 +772,7 @@ items follow a style that is consistent with other prog-modes."
    (sh . t)
    (perl . t)
    (ruby . t)
-   )) ;; (julit . t) does not work well, tooo bad
+   ))
 
 ;; No prompts when runing codes
 (setq org-confirm-babel-evaluate nil)
