@@ -22,7 +22,7 @@
 ;; Preparation
 ;;----------------------------------------------------------------------------
 ;; Always common lisp
-(require 'cl)
+(require 'cl-lib)
 
 ;; Load package layers packed in each section
 (defun load-package-layer (package-list)
