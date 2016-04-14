@@ -228,6 +228,16 @@
 ;; Fold section
 ;;----------------------------------------------------------------------------
 (load-library "hideshow")
+
+;; https://www.emacswiki.org/emacs/HideShow
+(add-hook 'c-mode-common-hook   'hs-minor-mode)
+(add-hook 'emacs-lisp-mode-hook 'hs-minor-mode)
+(add-hook 'java-mode-hook       'hs-minor-mode)
+(add-hook 'lisp-mode-hook       'hs-minor-mode)
+(add-hook 'perl-mode-hook       'hs-minor-mode)
+(add-hook 'sh-mode-hook         'hs-minor-mode)
+;; Now we have code folding for all modes, not just the ones listed above.
+
 (setq-default case-fold-search t)
 (global-set-key (kbd "C-+") 'hs-show-block)
 (global-set-key (kbd "C--") 'hs-hide-block)
