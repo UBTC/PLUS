@@ -23,6 +23,7 @@
 ;;----------------------------------------------------------------------------
 ;; Always common lisp
 (require 'cl-lib)
+(eval-when-compile (require 'cl))
 
 ;; Load package layers packed in each section
 (defun load-package-layer (package-list)
@@ -759,8 +760,7 @@ items follow a style that is consistent with other prog-modes."
    (calc . t)
    (ditaa . t)
    (plantuml . t)
-   ;; (julit . t) ;; This does not work well, too bad.
-   ;; https://github.com/gjkerns/ob-julia/blob/master/ob-julia-doc.org
+   ;; (julit . t) ;; does not work well. https://github.com/gjkerns/ob-julia/blob/master/ob-julia-doc.org
    (R . t)
    (latex . t)
    (java . t)
