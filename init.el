@@ -1,6 +1,7 @@
 ;; !/usr/bin/env emacs
 ;; -*- coding:utf-8 -*-
 
+
 ;; PULSE  """""""""""""""""""""""""""""""""""""""""""""""""""""""
 ;;
 ;; PULSE --- m.w.'s Emacs configurations (3G)
@@ -17,6 +18,7 @@
 ;; https://github.com/ubtc/PULSE
 ;;
 ;; """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
 
 ;;----------------------------------------------------------------------------
 ;; Preparation
@@ -324,6 +326,7 @@
 ;;----------------------------------------------------------------------------
 ;; Vim section
 ;;----------------------------------------------------------------------------
+(setq evil-toggle-key "C-M-`")
 (defvar vim-pkglayer '(evil) "Package layer for vim")
 (load-package-layer vim-pkglayer)
 
@@ -1025,6 +1028,8 @@ items follow a style that is consistent with other prog-modes."
 ;; Termination
 ;;----------------------------------------------------------------------------
 (setq-default initial-scratch-message
-              (concat ";; Happy hacking in PULSE powered " (or invocation-name "") ", " (or user-login-name "") "!\n\n"))
-(message "Emacs session initialization finished in %d seconds." (time-to-seconds (time-since emacs-load-start-time)))
+              (concat ";; Happy hacking in PULSE powered "
+                      (or invocation-name "") ", " (or user-login-name "") "!\n\n"))
+(message "Emacs session initialization finished in %d seconds."
+         (time-to-seconds (time-since emacs-load-start-time)))
 (message "\nWelcome to PULSE powered %s, %s!\n" (invocation-name) (user-login-name))
