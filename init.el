@@ -263,6 +263,7 @@
 
 ;; Use system clipboard
 (setq x-select-enable-clipboard t)
+(setq x-select-enable-clipboard-manager nil)
 
 
 ;;----------------------------------------------------------------------------
