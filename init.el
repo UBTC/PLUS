@@ -117,6 +117,7 @@
                            dired+
                            ebib
                            elpy
+                           ensime
                            ess
                            evil
                            flymake
@@ -131,6 +132,8 @@
                            multiple-cursors
                            org
                            pandoc-mode
+                           sbt-mode
+                           scala-mode
                            session
                            smex
                            vlf
