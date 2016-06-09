@@ -136,6 +136,7 @@
                            ;; scala-mode
                            session
                            smex
+                           use-package
                            vlf
                            writegood-mode
   ) "my ELPA packages")
@@ -601,7 +602,6 @@
 ;;----------------------------------------------------------------------------
 ;; Scala section
 ;;----------------------------------------------------------------------------
-;; the Emacs scala-mode seems departured
 (use-package ensime :commands ensime ensime-mode)
 (add-hook 'scala-mode-hook 'ensime-mode)
 
