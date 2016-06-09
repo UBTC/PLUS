@@ -132,8 +132,8 @@
                            multiple-cursors
                            org
                            pandoc-mode
-                           sbt-mode
-                           scala-mode
+                           ;; sbt-mode
+                           ;; scala-mode
                            session
                            smex
                            vlf
@@ -599,6 +599,14 @@
 
 
 ;;----------------------------------------------------------------------------
+;; Scala section
+;;----------------------------------------------------------------------------
+;; the Emacs scala-mode seems departured
+(use-package ensime :commands ensime ensime-mode)
+(add-hook 'scala-mode-hook 'ensime-mode)
+
+
+;;----------------------------------------------------------------------------
 ;; R section
 ;;----------------------------------------------------------------------------
 ;; https://github.com/kyleam/emacs.d/blob/master/lisp/init-ess.el
@@ -1032,8 +1040,6 @@ items follow a style that is consistent with other prog-modes."
 ;; Termination
 ;;----------------------------------------------------------------------------
 (setq-default initial-scratch-message
-              (concat ";; Happy hacking in PULSE powered "
-                      (or invocation-name "") ", " (or user-login-name "") "!\n\n"))
-(message "Emacs session initialization finished in %d seconds."
-         (time-to-seconds (time-since emacs-load-start-time)))
+          (concat ";; Happy hacking in PULSE powered " (or invocation-name "") ", " (or user-login-name "") "!\n\n"))
+(message "Emacs session initialization finished in %d seconds." (time-to-seconds (time-since emacs-load-start-time)))
 (message "\nWelcome to PULSE powered %s, %s!\n" (invocation-name) (user-login-name))
