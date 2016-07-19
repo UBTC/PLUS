@@ -2,11 +2,11 @@
 ;; -*- coding:utf-8 -*-
 
 
-;; PULSE  """""""""""""""""""""""""""""""""""""""""""""""""""""""
+;; PLUS  """""""""""""""""""""""""""""""""""""""""""""""""""""""
 ;;
-;; PULSE --- m.w.'s Emacs configurations (3G)
+;; plus --- m.w.'s Emacs configurations (3G)
 ;;
-;; PULSE(
+;; plus(
 ;;   section1([pkg layer,] set layer),
 ;;   section2([pkg layer,] set layer),
 ;;   ...)
@@ -15,9 +15,9 @@
 ;;   and a lot of other internet resources.
 ;;
 ;; COPYRIGHT, Mogei Wang, 2010-2016
-;; https://github.com/ubtc/PULSE
+;; https://github.com/ubtc/plus
 ;;
-;; """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+;; """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 
 ;;----------------------------------------------------------------------------
@@ -287,7 +287,7 @@
 ;; GUI section
 ;;----------------------------------------------------------------------------
 ;; Window frame
-(setq frame-title-format '("%b" " - PULSE powered Emacs"))
+(setq frame-title-format '("%b" " - PLUS"))
 (setq-default buffers-menu-max-size 25)
 
 ;; Bars
@@ -1040,6 +1040,6 @@ items follow a style that is consistent with other prog-modes."
 ;; Termination
 ;;----------------------------------------------------------------------------
 (setq-default initial-scratch-message
-          (concat ";; Happy hacking in PULSE powered " (or invocation-name "") ", " (or user-login-name "") "!\n\n"))
+          (concat ";; Happy hacking in PLUS powered " (or invocation-name "") ", " (or user-login-name "") "!\n\n"))
 (message "Emacs session initialization finished in %d seconds." (time-to-seconds (time-since emacs-load-start-time)))
-(message "\nWelcome to PULSE powered %s, %s!\n" (invocation-name) (user-login-name))
+(message "\nWelcome to PLUS powered %s, %s!\n" (invocation-name) (user-login-name))

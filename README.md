@@ -1,5 +1,5 @@
-PULSE
-=====
+PLUS
+====
 
 m.w.'s [Emacs](https://www.gnu.org/software/emacs/) configuration, which was inspired by
     [Aaron Bedra's emacs.d](https://github.com/abedra/emacs.d) and [Bin Chen's emacs.d](https://github.com/redguardtoo/emacs.d).
@@ -17,9 +17,9 @@ m.w.'s [Emacs](https://www.gnu.org/software/emacs/) configuration, which was ins
 # Installation
 1. Backup the current `Emacs` configuration, e.g., the file `~/.emacs` or the folder `~/.emacs.d/`.
 1. Uninstall all systematic `Emacs` plugins. All plugins will be placed at `~/.emacs.d` from now on.
-1. Clone `PULSE`
+1. Clone `plus`
 
-    `cd ~; git clone https://github.com/ubtc/pulse.git ~/.emacs.d; cd -`
+    `cd ~; git clone https://github.com/ubtc/plus.git ~/.emacs.d; cd -`
 
 1. Clone `snippets`
 
