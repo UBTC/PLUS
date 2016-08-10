@@ -85,7 +85,7 @@
 (setq-default gc-cons-percentage 0.5)
 
 ;; WWW
-(setq browse-url-mozilla-program "google-chrome")
+(setq browse-url-mozilla-program "firefox")
 
 
 ;;----------------------------------------------------------------------------
@@ -112,9 +112,7 @@
 
 (defvar my-elpa-packages '(ace-jump-mode
                            browse-kill-ring
-                           color-theme
                            company
-                           dired+
                            ebib
                            elpy
                            ensime
@@ -356,7 +354,7 @@
 ;;----------------------------------------------------------------------------
 ;; Directories section
 ;;----------------------------------------------------------------------------
-(defvar dir-pkglayer '(dired+) "Package layer for directories")
+(defvar dir-pkglayer '(dired) "Package layer for directories")
 (load-package-layer dir-pkglayer)
 
 (setq-default dired-details-hidden-string "")
@@ -373,9 +371,8 @@
                 ((if *unix* "feh" "open") "gif" "jpeg" "jpg" "tif" "png" )
                 ("7z x" "7z")
                 ("djview" "djvu")
-                ("firefox" "xml" "xhtml" "html" "htm" "mht")))
-(add-to-list 'dired-guess-shell-alist-default
-            (list (concat "\\." (regexp-opt (cdr file) t) "$") (car file))))
+                ("firefox" "xml" "xhtml" "html" "htm" "mht"))))
+        ;(add-to-list 'dired-guess-shell-alist-default (list (concat "\\." (regexp-opt (cdr file) t) "$") (car file))))
 
 ;; Find-file-in-project (ffip).
 (autoload 'find-file-in-project "find-file-in-project" "" t)
@@ -582,15 +579,13 @@
 ;;----------------------------------------------------------------------------
 ;; Themes section
 ;;----------------------------------------------------------------------------
-(defvar theme-pkglayer '(color-theme
-                         monokai-theme
-                         ) "Package layer for themes")
+(defvar theme-pkglayer '(monokai-theme) "Package layer for themes")
 (load-package-layer theme-pkglayer)
 
-(defadvice load-theme (before disable-themes-first activate)
+;(defadvice load-theme (before disable-themes-first activate)
   ;; diable all themes, work around color theme bug
   ;; see https://plus.google.com/106672400078851000780/posts/KhTgscKE8PM
-  (dolist (i custom-enabled-themes) (disable-theme i)))
+  ;(dolist (i custom-enabled-themes) (disable-theme i)))
 
 ;; Custom sets
 (custom-set-faces
