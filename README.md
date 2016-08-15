@@ -1,7 +1,7 @@
 PLUS
 ====
 
-m.w.'s [Emacs](https://www.gnu.org/software/emacs/) configuration, which was inspired by
+plus is m.w.'s [Emacs](https://www.gnu.org/software/emacs/) configuration, and was inspired by
     [Aaron Bedra's emacs.d](https://github.com/abedra/emacs.d) and [Bin Chen's emacs.d](https://github.com/redguardtoo/emacs.d).
 
 ## Directory structure
@@ -12,7 +12,7 @@ m.w.'s [Emacs](https://www.gnu.org/software/emacs/) configuration, which was ins
 - `~/.emacs.d/elpa/` and the other things will be auto-maintained by `elpa` or the other packages.
 
 ## Modules
-**Golang, Python, Julia, LaTeX, orgmode, markdown, pandoc, R and gnuplot are supported**
+**Golang, Python, Julia, LaTeX, orgmode, markdown, pandoc, gnuplot, R and scala are supported**
 
 # Installation
 1. Backup the current `Emacs` configuration, e.g., the file `~/.emacs` or the folder `~/.emacs.d/`.

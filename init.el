@@ -285,7 +285,7 @@
 ;; GUI section
 ;;----------------------------------------------------------------------------
 ;; Window frame
-(setq frame-title-format '("%b" " - PLUS"))
+(setq frame-title-format '("%b" " - emacs+"))
 (setq-default buffers-menu-max-size 25)
 
 ;; Bars
@@ -1040,6 +1040,6 @@ items follow a style that is consistent with other prog-modes."
 ;; Termination
 ;;----------------------------------------------------------------------------
 (setq-default initial-scratch-message
-          (concat ";; Happy hacking in PLUS powered " (or invocation-name "") ", " (or user-login-name "") "!\n\n"))
+          (concat ";; Happy hacking in emacs+, " (or user-login-name "") "!\n\n"))
 (message "Emacs session initialization finished in %d seconds." (time-to-seconds (time-since emacs-load-start-time)))
-(message "\nWelcome to PLUS powered %s, %s!\n" (invocation-name) (user-login-name))
+(message "\nWelcome to emacs+, %s!\n" (user-login-name))
