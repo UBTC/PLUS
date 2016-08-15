@@ -978,6 +978,11 @@ items follow a style that is consistent with other prog-modes."
   (unless *mswin* (set-selection-coding-system 'utf-8))
   (prefer-coding-system 'utf-8))
 
+;; setup input method
+;; use `C-\` to switch
+;; `eim` was said better
+(setq default-input-method "chinese-py-punct")
+
 
 ;;----------------------------------------------------------------------------
 ;; Extension section
