@@ -3,6 +3,7 @@
 .custom.el
 .depend
 pyim/
+.ropeproject/
 en_US/
 aspell*/
 misc/
