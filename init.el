@@ -348,7 +348,7 @@
 
 ;; vimrc
 (autoload 'vimrc-mode "vimrc-mode")
-(add-to-list 'auto-mode-alist '("~/.config/nvim/init.vim" . vimrc-mode))
+(add-to-list 'auto-mode-alist '("~/.vim/vimrc" . vimrc-mode))
 
 
 ;;----------------------------------------------------------------------------
