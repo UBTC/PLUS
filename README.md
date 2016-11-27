@@ -1,7 +1,7 @@
 PLUS
 ====
 
-plus is m.w.'s [Emacs](https://www.gnu.org/software/emacs/) configuration, and was inspired by
+plus is m.w.'s [Emacs](https://www.gnu.org/software/emacs/) configuration inspired by
     [Aaron Bedra's emacs.d](https://github.com/abedra/emacs.d) and [Bin Chen's emacs.d](https://github.com/redguardtoo/emacs.d).
 
 ## Directory structure
@@ -47,6 +47,10 @@ External applications are optional, and can be installed through OS package mana
 
 ### R platform
 - needed by `ESS`
+- install through OS package manager
+
+### scala (and sbt)
+- needed by `ensime-mode/scala-mode-hook`
 - install through OS package manager
 
 ### julia platform
