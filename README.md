@@ -1,7 +1,7 @@
 PLUS
 ====
 
-plus is m.w.'s [Emacs](https://www.gnu.org/software/emacs/) configuration inspired by
+PLUS is an [Emacs](https://www.gnu.org/software/emacs/) configuration inspired by
     [Aaron Bedra's emacs.d](https://github.com/abedra/emacs.d) and [Bin Chen's emacs.d](https://github.com/redguardtoo/emacs.d).
 
 ## Directory structure
@@ -17,7 +17,7 @@ plus is m.w.'s [Emacs](https://www.gnu.org/software/emacs/) configuration inspir
 # Installation
 1. Backup the current `Emacs` configuration, e.g., the file `~/.emacs` or the folder `~/.emacs.d/`.
 1. Uninstall all systematic `Emacs` plugins. All plugins will be placed at `~/.emacs.d` from now on.
-1. Clone `plus`
+1. Clone `PLUS`
 
     `cd ~; git clone https://github.com/ubtc/plus.git ~/.emacs.d; cd -`
 
