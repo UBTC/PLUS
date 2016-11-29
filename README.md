@@ -21,10 +21,6 @@ PLUS is an [Emacs](https://www.gnu.org/software/emacs/) configuration inspired b
 
     `cd ~; git clone https://github.com/ubtc/plus.git ~/.emacs.d; cd -`
 
-1. Clone `snippets`
-
-    `cd ~/.emacs.d/; git clone https://github.com/AndreaCrotti/yasnippet-snippets snippets; cd -`
-
 1. Run the following command to fetch the latest packages from remote package repositories:
 
     `emacs -nw --batch -l ~/.emacs.d/init.el -f package-refresh-contents`
