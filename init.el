@@ -268,6 +268,29 @@
 (setq x-select-enable-clipboard-manager nil)
 
 
+;; http://emacs.stackexchange.com/questions/412/copy-and-paste-between-emacs-in-an-x-terminal-and-other-x-applications
+(defmacro with-x-environment (&rest body)
+  `(let ((process-environment
+      (cons (concat "DISPLAY=" (getenv "DISPLAY" (selected-frame)))
+        process-environment)))
+     (if (getenv "XAUTHORITY" (selected-frame))
+     (setq process-environment
+           (cons (concat "XAUTHORITY=" (getenv "XAUTHORITY" (selected-frame)))
+             process-environment)))
+     ,@body))
+(defun x-terminal-copy (text)
+  (with-temp-buffer
+    (insert text)
+    (with-x-environment
+     (call-process-region (point-min) (point-max) "xsel" nil nil nil "-bi"))))
+(defadvice x-select-text
+  (before x-select-text-in-tty activate)
+  "Use xsel to copy to the X clipboard when running in a terminal under X."
+  (when (and (eq (framep (selected-frame)) t)
+         (getenv "DISPLAY" (selected-frame)))
+    (x-terminal-copy text)))
+
+
 ;;----------------------------------------------------------------------------
 ;; Spacing section
 ;;----------------------------------------------------------------------------
