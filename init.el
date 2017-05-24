@@ -125,13 +125,12 @@
                            idomenu
                            julia-mode
                            julia-shell
+                           kotlin-mode
                            markdown-mode
                            monokai-theme
                            multiple-cursors
                            org
                            pandoc-mode
-                           ;; sbt-mode
-                           ;; scala-mode
                            session
                            smex
                            use-package
@@ -618,10 +617,8 @@
 
 
 ;;----------------------------------------------------------------------------
-;; Scala section
+;; Kotlin section
 ;;----------------------------------------------------------------------------
-(use-package ensime :commands ensime ensime-mode)
-(add-hook 'scala-mode-hook 'ensime-mode)
 
 
 ;;----------------------------------------------------------------------------

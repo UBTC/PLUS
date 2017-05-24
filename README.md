@@ -12,7 +12,7 @@ PLUS is an [Emacs](https://www.gnu.org/software/emacs/) configuration inspired b
 - `~/.emacs.d/elpa/` and the other things will be auto-maintained by `elpa` or the other packages.
 
 ## Modules
-**Golang, Python, Julia, LaTeX, orgmode, markdown, pandoc, gnuplot, R and scala are supported**
+**Golang, Python, Julia, LaTeX, orgmode, markdown, pandoc, gnuplot, R and Kotlin are supported**
 
 # Installation
 1. Backup the current `Emacs` configuration, e.g., the file `~/.emacs` or the folder `~/.emacs.d/`.
@@ -39,15 +39,15 @@ External applications are optional, and can be installed through OS package mana
 
 ### python platform (python, jedi, flake8 and importmagic)
 - needed by `python-mode`
-- install through OS package manager and/or `pip/pip3`
+- install through OS package manager or `pip/pip3`
 
 ### R platform
 - needed by `ESS`
 - install through OS package manager
 
-### scala (and sbt)
-- needed by `ensime-mode/scala-mode-hook`
-- install through OS package manager
+### Kotlin
+- needed by `kotlin-mode`
+- install through OS package manager or through `sdkman!`
 
 ### julia platform
 - needed by `julia-mode` and `julia-shell`
