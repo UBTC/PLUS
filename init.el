@@ -49,7 +49,7 @@
 ;;----------------------------------------------------------------------------
 ;; Pathes
 (setenv "PATH" (concat "/usr/local/bin:/opt:/usr/bin:/bin" (getenv "PATH")))
-;; (setenv "GOPATH" (concat (getenv "HOME") "/goWork"))
+;; (setenv "GOPATH" (concat (getenv "HOME") "/golang"))
 ;; (add-to-list 'exec-path (concat (getenv "GOPATH") "/bin"))
 
 ;; Architectures related
