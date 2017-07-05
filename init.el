@@ -809,7 +809,7 @@ items follow a style that is consistent with other prog-modes."
    (emacs-lisp . t)
    (matlab . t)
    (octave . t)
-   (sh . t)
+   (shell . t)
    (perl . t)
    (ruby . t)
    ))
