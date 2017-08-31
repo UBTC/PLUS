@@ -33,15 +33,15 @@ External applications are optional, and can be installed through OS package mana
 - [homebrew](https://github.com/mxcl/homebrew) for `Mac`, and
 - various `Linux` package managers (`apt` for `Ubuntu`, `yum` for `Redhat`, `pacman` for `Arch`, `emerge` for `Gentoo`, etc.)
 
-### Golang platform
+### Golang
 - needed by `golang-mode`
 - install through OS package manager
 
-### Python platform (Python, JEDI, Flake8 and importmagic)
+### Python (and JEDI, Flake8, importmagic)
 - needed by `python-mode`
 - install through OS package manager or `pip/pip3`
 
-### R platform
+### R
 - needed by `ess`
 - install through OS package manager
 
@@ -53,15 +53,15 @@ External applications are optional, and can be installed through OS package mana
 - needed by `kotlin-mode`
 - install through OS package manager or through `sdkman!`
 
-### Julia platform
+### Julia
 - needed by `julia-mode` and `julia-shell`
 - install through OS package manager
 
-### pandoc platform
+### pandoc
 - needed by `pandoc-mode`
 - install through OS package manager
 
-### AUCTeX, and XeTeX/LaTeX
+### AUCTeX or XeTeX or LaTeX
 - needed by `auctex` (for writing and formatting `TeX` files in `Emacs`)
 - install through OS package manager (`auctex` need to be downloaded manually)
 
@@ -77,7 +77,7 @@ External applications are optional, and can be installed through OS package mana
 - needed by `org-mode` to export `org` file to `odt` file
 - install through OS package manager
 
-### aspell/hunspell
+### Aspell or hunspell
 - needed by `flyspell`
 - install through OS package manager. `aspell` usually is a better choice for programmers, whose dictionary has been set to `en_US`.
 
