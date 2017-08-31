@@ -1,18 +1,18 @@
 PLUS
 ====
 
-PLUS is an [Emacs](https://www.gnu.org/software/emacs/) configuration inspired by
+PLUS is an [Emacs](https://www.gnu.org/software/emacs/) configuration for researchers, which is inspired by
     [Aaron Bedra's emacs.d](https://github.com/abedra/emacs.d) and [Bin Chen's emacs.d](https://github.com/redguardtoo/emacs.d).
 
 ## Directory structure
 - `~/.emacs.d/init.el` is the configuration entrance.
 - `~/.emacs.d/custom.el` includes user's personal configurations (`custom.org` also works).
-- `~/.emacs.d/sitelisp/` collects the packages that are NOT maintained by package manager `elpa`.
-- `~/.emacs.d/snippets/` collects [the official snippets of yasnippet](https://github.com/AndreaCrotti/yasnippet-snippets).
-- `~/.emacs.d/elpa/` and the other things will be auto-maintained by `elpa` or the other packages.
+- `~/.emacs.d/sitelisp/` collects the packages that are NOT maintained by package manager `ELPA`.
+- `~/.emacs.d/snippets/` collects [the official `Snippets` of `YASnippet`](https://github.com/AndreaCrotti/yasnippet-snippets).
+- `~/.emacs.d/elpa/` and the other things will be auto-maintained by `ELPA` or the other packages.
 
 ## Modules
-**Golang, Python, Julia, LaTeX, orgmode, markdown, pandoc, gnuplot, R and Kotlin are supported**
+**Golang, R, Python, Julia, LaTeX, markdown, orgmode, pandoc, gnuplot, Scala and Kotlin are supported**
 
 # Installation
 1. Backup the current `Emacs` configuration, e.g., the file `~/.emacs` or the folder `~/.emacs.d/`.
@@ -31,25 +31,29 @@ PLUS is an [Emacs](https://www.gnu.org/software/emacs/) configuration inspired b
 External applications are optional, and can be installed through OS package managers, i.e.,
 - [apt-cyg](https://github.com/transcode-open/apt-cyg) for `Cygwin`,
 - [homebrew](https://github.com/mxcl/homebrew) for `Mac`, and
-- various `Linux` package managers (`apt-get` for `Ubuntu`, `yum` for `Redhat`, `pacman` for `Arch`, `emerge` for `Gentoo`, etc.)
+- various `Linux` package managers (`apt` for `Ubuntu`, `yum` for `Redhat`, `pacman` for `Arch`, `emerge` for `Gentoo`, etc.)
 
-### golang platform
+### Golang platform
 - needed by `golang-mode`
 - install through OS package manager
 
-### python platform (python, jedi, flake8 and importmagic)
+### Python platform (Python, JEDI, Flake8 and importmagic)
 - needed by `python-mode`
 - install through OS package manager or `pip/pip3`
 
 ### R platform
-- needed by `ESS`
+- needed by `ess`
+- install through OS package manager
+
+### Scala (and sbt)
+- needed by `ensime-mode/scala-mode-hook`
 - install through OS package manager
 
 ### Kotlin
 - needed by `kotlin-mode`
 - install through OS package manager or through `sdkman!`
 
-### julia platform
+### Julia platform
 - needed by `julia-mode` and `julia-shell`
 - install through OS package manager
 
@@ -57,11 +61,11 @@ External applications are optional, and can be installed through OS package mana
 - needed by `pandoc-mode`
 - install through OS package manager
 
-### auctex, and xetex/latex
+### AUCTeX, and XeTeX/LaTeX
 - needed by `auctex` (for writing and formatting `TeX` files in `Emacs`)
 - install through OS package manager (`auctex` need to be downloaded manually)
 
-### bibtex
+### BibTeX
 - needed by `ebib`
 - install through OS package manager
 

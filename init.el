@@ -131,6 +131,8 @@
                            multiple-cursors
                            org
                            pandoc-mode
+                           sbt-mode
+                           scala-mode
                            session
                            smex
                            use-package
@@ -266,7 +268,6 @@
 (setq x-select-enable-clipboard t)
 (setq x-select-enable-clipboard-manager nil)
 
-
 ;; http://emacs.stackexchange.com/questions/412/copy-and-paste-between-emacs-in-an-x-terminal-and-other-x-applications
 (defmacro with-x-environment (&rest body)
   `(let ((process-environment
@@ -288,6 +289,17 @@
   (when (and (eq (framep (selected-frame)) t)
          (getenv "DISPLAY" (selected-frame)))
     (x-terminal-copy text)))
+
+;; (defun x-terminal-paste ()
+;;   (with-temp-buffer
+;;     (with-x-environment
+;;      (call-process "xsel" nil t nil "-bo"))))
+;; (defadvice x-cut-buffer-or-selection-value
+;;   (before x-cut-buffer-or-selection-value-in-tty activate)
+;;   "Use xsel to paste from the X clipboard when running in a terminal under X."
+;;   (when (and (eq (framep (selected-frame)) t)
+;;          (getenv "DISPLAY" (selected-frame)))
+;;     (x-terminal-paste text)))
 
 
 ;;----------------------------------------------------------------------------
@@ -617,8 +629,16 @@
 
 
 ;;----------------------------------------------------------------------------
+;; Scala section
+;;----------------------------------------------------------------------------
+(use-package ensime :commands ensime ensime-mode)
+(add-hook 'scala-mode-hook 'ensime-mode)
+
+
+;;----------------------------------------------------------------------------
 ;; Kotlin section
 ;;----------------------------------------------------------------------------
+;; Placeholder...
 
 
 ;;----------------------------------------------------------------------------
@@ -809,7 +829,7 @@ items follow a style that is consistent with other prog-modes."
    (emacs-lisp . t)
    (matlab . t)
    (octave . t)
-   (shell . t)
+   ;; (shell . t)
    (perl . t)
    (ruby . t)
    ))
