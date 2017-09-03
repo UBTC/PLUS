@@ -140,8 +140,13 @@
                            writegood-mode
   ) "my ELPA packages")
 
+;; this may take some time in the 1st run.
+(message "package checking")
+
 (loop for pkg in my-elpa-packages
       collecting(check-elpa-packages pkg))
+
+(message "package checked")
 
 
 ;;----------------------------------------------------------------------------
