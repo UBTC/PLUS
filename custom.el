@@ -1,3 +1,3 @@
 ;; User infomation
-(setq user-full-name "Mogei Wang")
-(setq user-mail-address "mogeiwang@gmail.com")
+(setq user-full-name "Maoji Wang")
+(setq user-mail-address "maoji.wang@cs.nyu.edu")
