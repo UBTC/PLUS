@@ -14,8 +14,8 @@
 ;; Based on Bedra's emacs.d, Chen's emacs.d
 ;;   and a lot of other internet resources.
 ;;
-;; COPYRIGHT, Mogei Wang, 2010-2016
-;; https://github.com/ubtc/plus
+;; COPYRIGHT, M Wang, 2010-2017
+;; https://github.com/UBTC/PLUS
 ;;
 ;; """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
@@ -108,7 +108,9 @@
 (package-initialize)
 (add-to-list 'package-archives '("marmalade" . "http://marmalade-repo.org/packages/"))
 (add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/"))
+(add-to-list 'package-archives '("melpa" . "http://melpa.milkbox.net/packages/") t)
 (setq package-archive-enable-alist '(("melpa" deft magit)))
+(package-initialize)
 
 (defvar my-elpa-packages '(ace-jump-mode
                            browse-kill-ring
@@ -138,6 +140,7 @@
                            use-package
                            vlf
                            writegood-mode
+                           yasnippet-snippets
   ) "my ELPA packages")
 
 ;; this may take some time in the 1st run.
@@ -201,12 +204,14 @@
 ;;----------------------------------------------------------------------------
 ;; Snippet section
 ;;----------------------------------------------------------------------------
-(defvar snippet-pkglayer '(yasnippet) "Package layer for snippets")
+(defvar snippet-pkglayer '(yasnippet-snippets) "Package layer for snippets")
 (load-package-layer snippet-pkglayer)
 
-(setq yas-snippet-dirs '("~/.emacs.d/snippets"))
-(yas-global-mode 1)
-(yas-reload-all)
+;;this was for the old verdion yas
+;;no more needed now..
+;(setq yas-snippet-dirs '("~/.emacs.d/yasnippet-snippets/snippets"))
+;(yas-global-mode 1)
+;(yas-reload-all)
 
 
 ;;----------------------------------------------------------------------------

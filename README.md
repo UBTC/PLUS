@@ -8,11 +8,10 @@ PLUS is an [Emacs](https://www.gnu.org/software/emacs/) configuration for resear
 - `~/.emacs.d/init.el` is the configuration entrance.
 - `~/.emacs.d/custom.el` includes user's personal configurations (`custom.org` also works).
 - `~/.emacs.d/sitelisp/` collects the packages that are NOT maintained by package manager `ELPA`.
-- `~/.emacs.d/snippets/` collects [the official `Snippets` of `YASnippet`](https://github.com/AndreaCrotti/yasnippet-snippets).
 - `~/.emacs.d/elpa/` and the other things will be auto-maintained by `ELPA` or the other packages.
 
 ## Modules
-**Golang, R, Python, Julia, LaTeX, markdown, orgmode, pandoc, gnuplot, Scala and Kotlin are supported**
+**Golang, R, Python, Julia, LaTeX, markdown, orgmode, pandoc, gnuplot, Scala and Kotlin are supported.**
 
 # Installation
 1. Backup the current `Emacs` configuration, e.g., the file `~/.emacs` or the folder `~/.emacs.d/`.
@@ -24,8 +23,6 @@ PLUS is an [Emacs](https://www.gnu.org/software/emacs/) configuration for resear
 1. Run the following command to fetch the latest packages from remote package repositories:
 
     `emacs -nw --batch -l ~/.emacs.d/init.el -f package-refresh-contents`
-
-1. That's all.
 
 ## Third party tools installation (OPTIONAL)
 External applications are optional, and can be installed through OS package managers, i.e.,
