@@ -4,9 +4,9 @@
 
 ;; PLUS  """""""""""""""""""""""""""""""""""""""""""""""""""""""
 ;;
-;; plus --- m.w.'s Emacs configurations (3G)
+;; PLUS --- m.w.'s Emacs configurations (3G)
 ;;
-;; plus(
+;; PLUS(
 ;;   section1([pkg layer,] set layer),
 ;;   section2([pkg layer,] set layer),
 ;;   ...)
@@ -105,11 +105,9 @@
 (defvar package-pkglayer '(package) "Package layer for import more packages")
 (load-package-layer package-pkglayer)
 
-(package-initialize)
-(add-to-list 'package-archives '("marmalade" . "http://marmalade-repo.org/packages/"))
-(add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/"))
-(add-to-list 'package-archives '("melpa" . "http://melpa.milkbox.net/packages/") t)
-(setq package-archive-enable-alist '(("melpa" deft magit)))
+(add-to-list 'package-archives '("marmalade" . "http://marmalade-repo.org/packages/") t)
+(add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/") t)
+(add-to-list 'package-archives '("milkbox" . "http://melpa.milkbox.net/packages/") t)
 (package-initialize)
 
 (defvar my-elpa-packages '(ace-jump-mode
@@ -648,7 +646,9 @@
 ;;----------------------------------------------------------------------------
 ;; Kotlin section
 ;;----------------------------------------------------------------------------
-;; Placeholder...
+;; this is not good
+(defvar kotlin-pkglayer '(kotlin-mode) "Package layer for Kotlin")
+(load-package-layer kotlin-pkglayer)
 
 
 ;;----------------------------------------------------------------------------
