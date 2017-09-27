@@ -127,7 +127,7 @@
                            julia-shell
                            kotlin-mode
                            markdown-mode
-                           monokai-theme
+                           darkokai-theme
                            multiple-cursors
                            org
                            pandoc-mode
@@ -621,7 +621,7 @@
 ;;----------------------------------------------------------------------------
 ;; Themes section
 ;;----------------------------------------------------------------------------
-(defvar theme-pkglayer '(monokai-theme) "Package layer for themes")
+(defvar theme-pkglayer '(darkokai-theme) "Package layer for themes")
 (load-package-layer theme-pkglayer)
 
 ;(defadvice load-theme (before disable-themes-first activate)
