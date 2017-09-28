@@ -106,9 +106,9 @@
 (load-package-layer package-pkglayer)
 
 ;; when working on an old Emacs:
-;; 1) comment the above package-pkglayer lines
+;; 1) comment the above package-pkglayer lines;
 ;; 2) uncomment the following line:
-;; (load (expand-file-name "~/.emacs.d/sitelisp/package.el")) ;-)
+;; (load (expand-file-name "~/.emacs.d/sitelisp/.package.el")) ;-)
 
 (add-to-list 'package-archives '("marmalade" . "https://marmalade-repo.org/packages/") t)
 (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
