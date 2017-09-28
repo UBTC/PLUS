@@ -105,9 +105,9 @@
 (defvar package-pkglayer '(package) "Package layer for import more packages")
 (load-package-layer package-pkglayer)
 
-(add-to-list 'package-archives '("marmalade" . "http://marmalade-repo.org/packages/") t)
-(add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/") t)
-(add-to-list 'package-archives '("milkbox" . "http://melpa.milkbox.net/packages/") t)
+(add-to-list 'package-archives '("marmalade" . "https://marmalade-repo.org/packages/") t)
+(add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
+(add-to-list 'package-archives '("milkbox" . "https://melpa.milkbox.net/packages/") t)
 (package-initialize)
 
 (defvar my-elpa-packages '(ace-jump-mode
